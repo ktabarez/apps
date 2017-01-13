@@ -1,0 +1,169 @@
+﻿<form name="detailsForm">
+	<div class="row">
+		<div class="col-lg-8">
+			<div class="widget">
+				<div class="widget-header bordered-top bordered-blue">
+					<span class="widget-caption ">{{nrvm.detailsVm.title}}</span>
+				</div><!--Widget Header-->
+				<div class="widget-body bordered-left">
+					<div class="row">
+						<div class="col-lg-8">
+							<div class="form-group" ng-class="{ 'has-error': detailsForm.title.$touched && detailsForm.title.$invalid }">
+								<label class="control-label danger">*</label>
+								<label class="control-label">Title</label>
+								<input type="text" class="form-control" ng-model="nrvm.projectRequest.title" required>
+							</div>
+						</div>
+						<div class="col-lg-4">
+							<div class="form-group">
+								<label for="reservation">Delivered by</label>
+								<div class="controls">
+									<div class="input-group">
+										<input class="form-control date-picker" id="id-date-picker-1" type="text" data-date-format="mm/dd/yyyy" ng-model="nrvm.projectRequest.deliveredBy">
+										<span class="input-group-addon">
+											<i class="fa fa-calendar"></i>
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-4">
+							<div class="form-group">
+								<label class="control-label danger">*</label>
+								<label for="reservation">Requested by</label>
+								<span class="input-icon icon-right">
+									<select id="requested-by" style="width:100%"></select>
+								</span>
+							</div>
+						</div>
+						<div class="col-lg-4">
+							<div class="form-group">
+								<label for="reservation">Contacts</label>
+								<span class="input-icon icon-right">
+									<select id="contact-person" style="width:100%"></select>
+								</span>
+							</div>
+						</div>
+						<div class="col-lg-4">
+							<div class="form-group">
+								<label for="reservation">Work in progress contacts</label>
+								<span class="input-icon icon-right">
+									<select id="work-in-progress-contact-person" style="width:100%"></select>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="form-group-lg">
+								<label for="exampleInputEmail1">Benefit</label>
+								<div class="auto-expand-textarea smooth-transition" contenteditable="true" ng-model="nrvm.projectRequest.benefit"></div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="form-group-lg">
+								<label class="control-label danger">*</label>
+								<label for="exampleInputEmail1">Description</label>
+								<div class="auto-expand-textarea" contenteditable="true" ng-model="nrvm.projectRequest.description"></div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="form-group-lg">
+								<label for="exampleInputEmail1">Work In Progress Info</label>
+								<div class="auto-expand-textarea" contenteditable="true" ng-model="nrvm.projectRequest.workInProgressInfo"></div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="form-group-lg has-success">
+								<label for="exampleInputEmail1">Additional Comments</label>
+								<div class="auto-expand-textarea colored-success" contenteditable="true" ng-model="nrvm.projectRequest.additionalComments"></div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="checkbox">
+								<label class="control-label danger">*</label>
+								<label>
+									<input type="checkbox" class="colored-danger" ng-model="nrvm.projectRequest.isCriticalDeadline">
+									<span class="text">Has critical deadline?</span>
+								</label>
+							</div>
+						</div>
+					</div>
+				</div><!--Widget Body-->
+			</div>
+		</div>
+		<div class="col-lg-4">
+			<div class="widget">
+				<div class="widget-header bordered-top bordered-blue">
+					<span class="widget-caption">
+						{{nrvm.attachmentVm.title}}
+					</span>
+				</div><!--Widget Header-->
+				<div class="widget-body fileupload" id="fileupload">
+					<div class="row {{nrvm.attachmentVm.rowDragHereStyle}}">
+						<div class="col-lg-12">
+							<p class="text-align-center">
+								<i class="fa fa-download fa-5x"></i>
+								<br />
+								<label for="file">Drag files here</label>
+							</p>
+						</div>
+					</div>
+					<div class="row animated fadeInDown file" ng-repeat="attachment in nrvm.attachmentVm.attachments">
+						<div class="col-lg-1 file-actions">
+							<div class="btn-group-vertical">
+								<button class="btn btn-info btn-xs" ng-click="nrvm.attachmentVm.editAttachment(attachment)"><i class="fa fa-edit"></i></button>
+								<button class="btn btn-danger btn-xs" ng-click="nrvm.attachmentVm.deleteAttachment(attachment)"><i class="fa fa-trash"></i></button>
+							</div>
+						</div>
+						<div class="col-lg-11">
+							<div class="row">
+								<div class="col-lg-12 file-name">
+									{{attachment.name}}
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-lg-12 file-progress">
+									<!--<div class="progress progress-xxs progress-bordered">
+										<div class="progress-bar progress-bar-succes" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: {{attachment.progress}}%">
+											<span class="sr-only">
+												20% Complete
+											</span>
+										</div>
+									</div>-->
+									<div class="progress progress-xs progress-shadowed">
+										<div class="progress-bar {{attachment.progressBarClassStyle}}" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: {{attachment.progress}}%">
+											<span>
+												{{attachment.progressRounded}}%
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div><!--Widget Body-->
+			</div>
+		</div>
+	</div>
+	<hr class="wide" />
+	<div class="row">
+		<div class="col-lg-12">
+			<button type="button" class="btn btn-success" ng-click="nrvm.save()">Save Draft</button>
+			<button type="button" class="btn btn-default" ng-click="nrvm.approve()">Approve</button>
+			<button type="button" class="btn btn-danger" ng-click="nrvm.cancel()">Cancel</button>
+			<br />
+			{{nrvm.results}}
+		</div>
+	</div>
+</form>

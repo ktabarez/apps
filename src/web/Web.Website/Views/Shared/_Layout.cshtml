@@ -1,0 +1,16 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    @RenderSection("title", required: false)
+    @RenderSection("meta", required: false)
+    @RenderSection("links", required: false)
+    @RenderSection("headScripts", required: false)
+    @RenderSection("styleSheets", required: false)
+    @RenderSection("css", required: false)
+</head>
+<body>
+    @RenderBody()
+    @RenderSection("bodyScripts", required: false)
+    @RenderSection("jsCode", required: false)
+</body>
+</html>

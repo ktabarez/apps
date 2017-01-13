@@ -1,0 +1,225 @@
+﻿@{
+    ViewBag.Title = "Drafts";
+
+    var projectRequestId = Model == null ? 0 : Model.Id;
+}
+
+@section title
+{
+    <title>My Projects</title>
+}
+
+@section meta
+{
+
+}
+
+@section links
+{
+    <!--Page Related styles-->
+    <link href="~/assets/css/dataTables.bootstrap.css" rel="stylesheet" />
+}
+
+@section headScripts
+{
+
+}
+
+@section css
+{
+    <style>
+    </style>
+}
+
+<div class="page-content animated fadeInDown">
+    <!-- Page Breadcrumb -->
+    <div class="page-breadcrumbs">
+        <ul class="breadcrumb">
+            <li class="active" ng-repeat="breadcrumb in dvm.breadcrumbs">
+                <a href="/">Home</a>
+            </li>
+        </ul>
+    </div>
+    <!-- /Page Breadcrumb -->
+    <!-- Page Header -->
+    <div class="page-header position-relative">
+        <div class="header-title">
+            <h1>
+                Drafts
+            </h1>
+        </div>
+    </div>
+    <!-- /Page Header -->
+    <!-- Page Body -->
+    <div class="page-body">
+        <div class="row">
+            <div class="col-lg-12 col-sm-12 col-xs-12">
+                <div class="row">
+                    <div class="col-lg-12 col-sm-12 col-xs-12">
+                        <div class="widget">
+                            <div class="widget-header bg-mfcu">
+                                <i class="widget-icon fa fa-folder-open"></i>
+                                <span class="widget-caption">Project Requests</span>
+                                <div class="widget-buttons">
+                                    <a href="#" data-toggle="refresh">
+                                        <i class="fa fa-refresh"></i>
+                                    </a>
+                                </div><!--Widget Buttons-->
+                            </div><!--Widget Header-->
+                            <div class="widget-body">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div>
+                                            <a href="javascript:void(0);" class="btn btn-default">
+                                                Request
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="wide">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <table class="table table-bordered table-hover table-striped" id="my-project-requests-table">
+                                            <thead>
+                                                <tr role="row">
+                                                    <th class="ui-state-default">Description
+                                                    <th class="ui-state-default">Status</th>
+                                                    <th class="ui-state-default">Actions</th>
+                                                    <th class="ui-state-default">Delete</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tfoot>
+                                                <tr>
+                                                    <th rowspan="1" colspan="1"><input type="text" name="search_description" placeholder="Search description" class="form-control input-sm"></th>
+                                                    <th rowspan="1" colspan="1"><input type="text" name="search_status" placeholder="Search status" class="form-control input-sm"></th>
+                                                    <th rowspan="1" colspan="2"></th>
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+                                                <tr>
+                                                    <td><a href="#">PDF to HTML REST Api</a></td>
+                                                    <td><span class="label label-success">new draft</span></td>
+                                                    <td>
+                                                        <a href="#" class="btn btn-default shiny btn-xs black"><i class="fa fa-edit"></i> Edit</a>
+                                                        | <a href="#" class="btn btn-default shiny btn-xs black"><i class="fa fa-history"></i> History</a>
+                                                        |
+                                                        <div class="btn-group">
+                                                            <a class="btn btn-default shiny btn-xs success" href="javascript:void(0);"><i class="fa fa-check colored-success"></i> Submit Request</a>
+                                                            <a class="btn btn-default shiny dropdown-toggle btn-xs" data-toggle="dropdown" href="javascript:void(0);" aria-expanded="false"><i class="fa fa-angle-down"></i></a>
+                                                            <ul class="dropdown-menu">
+                                                                <li>
+                                                                    <a href="javascript:void(0);">Request More Information</a>
+                                                                </li>
+                                                                <li class="divider"></li>
+                                                                <li>
+                                                                    <a href="javascript:void(0);">Deny</a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                    <td><a href="#" class="btn btn-default btn-xs shiny danger"><i class="fa fa-trash-o"></i> Delete</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><a href="#">PDF to HTML REST Api</a></td>
+                                                    <td><span class="label label-success">new draft</span></td>
+                                                    <td>
+                                                        <a href="#" class="btn btn-default btn-xs black"><i class="fa fa-edit"></i> Edit</a>
+                                                        | <a href="#" class="btn btn-default btn-xs black"><i class="fa fa-history"></i> History</a>
+                                                        |
+                                                        <div class="btn-group">
+                                                            <a class="btn btn-default shiny btn-xs success" href="javascript:void(0);"><i class="fa fa-check colored-success"></i> Submit Request</a>
+                                                            <a class="btn btn-default shiny dropdown-toggle btn-xs" data-toggle="dropdown" href="javascript:void(0);" aria-expanded="false"><i class="fa fa-angle-down"></i></a>
+                                                            <ul class="dropdown-menu">
+                                                                <li>
+                                                                    <a href="javascript:void(0);">Request More Information</a>
+                                                                </li>
+                                                                <li class="divider"></li>
+                                                                <li>
+                                                                    <a href="javascript:void(0);">Deny</a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                    <td><a href="#" class="btn btn-default btn-xs danger"><i class="fa fa-trash-o"></i> Delete</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><a href="#">PDF to HTML REST Api</a></td>
+                                                    <td><span class="label label-danger">deleted</span></td>
+                                                    <td>
+                                                        <a href="#" class="btn btn-default shiny btn-xs black disabled"><i class="fa fa-edit"></i> Edit</a>
+                                                        | <a href="#" class="btn btn-default shiny btn-xs black disabled"><i class="fa fa-history"></i> History</a>
+                                                        |
+                                                        <div class="btn-group">
+                                                            <a class="btn btn-default shiny btn-xs success disabled" href="javascript:void(0);"><i class="fa fa-check colored-success"></i> Submit Request</a>
+                                                            <a class="btn btn-default shiny btn-xs success dropdown-toggle disabled" data-toggle="dropdown" href="javascript:void(0);" aria-expanded="false"><i class="fa fa-angle-down"></i></a>
+                                                            <ul class="dropdown-menu">
+                                                                <li>
+                                                                    <a href="javascript:void(0);">Request More Information</a>
+                                                                </li>
+                                                                <li class="divider"></li>
+                                                                <li>
+                                                                    <a href="javascript:void(0);">Deny</a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                    <td><a href="#" class="btn btn-default btn-xs success"><i class="fa fa-undo"></i> Undo Delete</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><a href="#">PDF to HTML REST Api</a></td>
+                                                    <td><span class="label label-danger">deleted</span></td>
+                                                    <td>
+                                                        <a href="#" class="btn btn-default shiny btn-xs black disabled"><i class="fa fa-edit"></i> Edit</a>
+                                                        | <a href="#" class="btn btn-default shiny btn-xs black disabled"><i class="fa fa-history"></i> History</a>
+                                                        |
+                                                        <div class="btn-group">
+                                                            <a class="btn btn-default shiny btn-xs success disabled" href="javascript:void(0);"><i class="fa fa-check colored-success"></i> Submit Request</a>
+                                                            <a class="btn btn-default shiny btn-xs success dropdown-toggle disabled" data-toggle="dropdown" href="javascript:void(0);" aria-expanded="false"><i class="fa fa-angle-down"></i></a>
+                                                            <ul class="dropdown-menu">
+                                                                <li>
+                                                                    <a href="javascript:void(0);">Request More Information</a>
+                                                                </li>
+                                                                <li class="divider"></li>
+                                                                <li>
+                                                                    <a href="javascript:void(0);">Deny</a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                    <td><a href="#" class="btn btn-default btn-xs success"><i class="fa fa-undo"></i> Undo Delete</a></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Body -->
+</div>
+
+@section bodyScripts
+{
+    <script src="~/assets/js/datatable/jquery.dataTables.min.js"></script>
+    <script src="~/assets/js/datatable/ZeroClipboard.js"></script>
+    <script src="~/assets/js/datatable/dataTables.bootstrap.min.js"></script>
+    <script src="~/assets/js/datatable/datatables-init.js"></script>
+}
+
+@section jscode
+{
+    <script>
+        console.log({
+            msg: 'id pulled from razor',
+            data: {
+                projectRequestId: @projectRequestId,
+            }
+        });
+    </script>
+}
+

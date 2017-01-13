@@ -1,0 +1,39 @@
+﻿	<!-- Main Container -->
+<div class="main-container container-fluid" ng-controller="NewRequestViewModel as nrvm" ng-init="nrvm.onViewSown()">
+	<!-- Page Container -->
+	<div class="page-container">
+		<!-- Page Sidebar -->
+		<div class="page-sidebar menu-compact hide" id="sidebar">
+		</div>
+		<!-- /Page Sidebar -->
+		<!-- Page Content -->
+		<div class="page-content animated fadeInDown">
+			<div class="page-body">
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="widget radius-bordered">
+							<div class="widget-header bg-mfcu">
+								<i class="widget-icon fa fa-folder-open"></i>
+								<span class="widget-caption">{{nrvm.title}}</span>
+								<div class="widget-buttons">
+									<a href="#" data-toggle="collapse"><i class="fa fa-minus"></i></a>
+								</div><!--Widget Buttons-->
+							</div><!--Widget Header-->
+							<div class="widget-body">
+								<new-request-form></new-request-form>
+							</div>
+							<!--Widget Body-->
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-12">
+							{{nrvm.attachmentVm.uploadProgress}}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /Page Content -->
+	</div>
+</div>
+<!-- Main Container -->

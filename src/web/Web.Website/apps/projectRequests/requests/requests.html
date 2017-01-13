@@ -1,0 +1,161 @@
+﻿	<!-- Main Container -->
+	<div class="main-container container-fluid" id="requests-view" ng-controller="RequestsViewModel as rsvm" ng-init="rsvm.onViewSown()">
+		<!-- Page Container -->
+		<div class="page-container">
+			<!-- Page Sidebar -->
+			<div class="page-sidebar menu-compact hide" id="sidebar">
+			</div>
+			<!-- /Page Sidebar -->
+			<!-- Page Content -->
+			<div class="page-content animated fadeInDown">
+				<!-- Page Body -->
+				<div class="page-body">
+					<div class="row">
+						<div class="col-lg-4 col-sm-12 col-xs-12 smooth-transition {{rsvm.needsMyApprovalRowStyle}}">
+							<div class="widget radius-bordered">
+								<div class="widget-header bg-danger">
+									<span class="widget-caption">Needs My Approval</span>
+									<div class="widget-buttons">
+										<a href="#" data-toggle="refresh">
+											<i class="fa fa-refresh"></i>
+										</a>
+									</div><!--Widget Buttons-->
+								</div><!--Widget Header-->
+								<div class="widget-body">
+									<div class="row">
+										<div class="col-lg-12">
+											<table class="table table-bordered table-hover table-striped" id="needs-my-approval-table">
+												<thead>
+													<tr role="row">
+														<th class="ui-state-default">Description</th>
+														<th class="ui-state-default">Actions</th>
+													</tr>
+												</thead>
+
+												<tfoot>
+													<tr>
+														<th rowspan="1"><input type="text" name="search_description" placeholder="Search description" class="form-control input-sm"></th>
+														<th rowspan="1"></th>
+													</tr>
+												</tfoot>
+												<tbody>
+													<!--<tr>
+									<td><a ng-href="/2">some title 234</a></td>
+									<td>
+										<div class="btn-group">
+											<button type="button" class="btn btn-default btn-sm shiny icon-only"><i class="fa fa-thumbs-o-up success"></i></button>
+											<button type="button" class="btn btn-default btn-sm shiny icon-only"><i class="fa fa-thumbs-o-down warning"></i></button>
+											<button type="button" class="btn btn-default btn-sm shiny icon-only"><i class="fa fa-reply danger"></i></button>
+											<button type="button" class="btn btn-default btn-sm shiny icon-only"><i class="fa fa-hand-stop-o danger"></i></button>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td><a href="/2">Project that needs your approval 2</a></td>
+									<td>
+										<div class="btn-group">
+											<button type="button" class="btn btn-default btn-sm shiny icon-only"><i class="fa fa-thumbs-o-up success"></i></button>
+											<button type="button" class="btn btn-default btn-sm shiny icon-only"><i class="fa fa-thumbs-o-down warning"></i></button>
+											<button type="button" class="btn btn-default btn-sm shiny icon-only"><i class="fa fa-reply danger"></i></button>
+											<button type="button" class="btn btn-default btn-sm shiny icon-only"><i class="fa fa-hand-stop-o danger"></i></button>
+										</div>
+									</td>
+								</tr>-->
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="{{rsvm.needsMyApprovalColumnStyle}} {{rsvm.myProjectRequestsRowStyle}}">
+							<div class="widget radius-bordered">
+								<div class="widget-header bg-mfcu">
+									<span class="widget-caption">My Project Requests {{rsvm.header.title}}</span>
+									<div class="widget-buttons">
+										<a href="#" data-toggle="refresh">
+											<i class="fa fa-refresh"></i>
+										</a>
+									</div><!--Widget Buttons-->
+								</div><!--Widget Header-->
+								<div class="widget-body">
+									<div class="row">
+										<div class="col-lg-12">
+											<table class="table table-bordered table-hover table-striped" id="my-project-table">
+												<thead>
+													<tr role="row">
+														<th class="ui-state-default">Description
+														<th class="ui-state-default">Status</th>
+														<th class="ui-state-default">Actions</th>
+													</tr>
+												</thead>
+
+												<tfoot>
+													<tr>
+														<th rowspan="1" colspan="1"><input type="text" name="search_description" placeholder="Search description" class="form-control input-sm"></th>
+														<th rowspan="1" colspan="1"><input type="text" name="search_status" placeholder="Search status" class="form-control input-sm"></th>
+														<th rowspan="1" colspan="1"></th>
+													</tr>
+												</tfoot>
+												<tbody>
+													<!--<tr ng-repeat="projectRequest in rsvm.projectRequests">
+									<td><a ng-href="/{{projectRequest.UserRequestId}}">{{projectRequest.Title}}</a></td>
+									<td><span class="label {{projectRequest.StatusCssStyle}}">{{projectRequest.Status}}</span></td>
+									<td>
+										<div class="btn-group">
+											<button type="button" class="btn btn-default btn-sm shiny success {{projectRequest.SubmitForApprovalActionStyle}}"><i class="fa fa-thumbs-o-up"></i>Submit for Approval</button>
+											<button type="button" class="btn btn-default btn-sm shiny danger {{projectRequest.CancelActionStyle}}"><i class="fa fa-times"></i>Cancel</button>
+										</div>
+									</td>
+								</tr>-->
+													<!--<tr>
+									<td><a ng-href="/2">PDF to HTML REST Api 2</a></td>
+									<td><span class="label label-orange">pending manager approval</span></td>
+									<td>
+										<div class="btn-group">
+											<button type="button" class="btn btn-default btn-sm shiny success disabled"><i class="fa fa-thumbs-o-up"></i>Submit for Approval</button>
+											<button type="button" class="btn btn-default btn-sm shiny danger"><i class="fa fa-times"></i>Cancel</button>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td><a ng-href="/3">PDF to HTML REST Api 3</a></td>
+									<td><span class="label label-orange">pending smt approval</span></td>
+									<td>
+										<div class="btn-group">
+											<button type="button" class="btn btn-default btn-sm shiny success  disabled"><i class="fa fa-thumbs-o-up"></i>Submit for Approval</button>
+											<button type="button" class="btn btn-default btn-sm shiny danger"><i class="fa fa-times"></i>Cancel</button>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td><a ng-href="/4">PDF to HTML REST Api 4</a></td>
+									<td><span class="label label-success">approved</span></td>
+									<td>
+										<button type="button" class="btn btn-default btn-sm success shiny disabled"><i class="fa fa-thumbs-o-up"></i>Submit for Approval</button>
+										<button type="button" class="btn btn-default btn-sm danger shiny disabled"><i class="fa fa-times"></i>Cancel</button>
+									</td>
+								</tr>
+								<tr>
+									<td><a ng-href="/5">PDF to HTML REST Api 5</a></td>
+									<td><span class="label label-sky">incomplete</span></td>
+									<td>
+										<button type="button" class="btn btn-default btn-sm shiny success disabled"><i class="fa fa-thumbs-o-up"></i>Submit for Approval</button>
+										<button type="button" class="btn btn-default btn-sm shiny danger"><i class="fa fa-times"></i>Cancel</button>
+									</td>
+								</tr>-->
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /Page Body -->
+			</div>
+			<!-- /Page Content -->
+		</div>
+	</div>
+	<!-- Main Container -->

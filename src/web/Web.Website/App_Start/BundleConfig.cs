@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Optimization;
 
-namespace Web.Api
+namespace Web.Website
 {
     public class BundleConfig
     {
@@ -10,6 +10,9 @@ namespace Web.Api
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
+                        "~/Scripts/jquery.validate*"));
 
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at http://modernizr.com to pick only the tests you need.
@@ -22,7 +25,7 @@ namespace Web.Api
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/assets/bootstrap.3.2.2.css",
-                      "~/assets/site.css"));
+                      "~/assets/css/site.css"));
         }
     }
 }
