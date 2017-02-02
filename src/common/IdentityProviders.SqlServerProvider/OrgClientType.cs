@@ -12,30 +12,17 @@ namespace IdentityProviders.SqlServerProvider
     using System;
     using System.Collections.Generic;
     
-    public partial class User
+    public partial class OrgClientType
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public User()
+        public OrgClientType()
         {
-            this.OrgAppUsers = new HashSet<OrgAppUser>();
-            this.OrgUsers = new HashSet<OrgUser>();
+            this.OrgClients = new HashSet<OrgClient>();
         }
     
         public int Id { get; set; }
-        public string UserName { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
-        public string PasswordHash { get; set; }
-        public string SecurityStamp { get; set; }
-        public bool IsLockoutEnabled { get; set; }
-        public bool IsTwoFactorEnabled { get; set; }
-        public int AccessFailedCount { get; set; }
-        public Nullable<System.DateTime> LockoutEndDateUtc { get; set; }
-        public string Claims { get; set; }
-        public string Logins { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Suffix { get; set; }
+        public string Name { get; set; }
+        public int OrgId { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         public string created_by { get; set; }
@@ -43,9 +30,8 @@ namespace IdentityProviders.SqlServerProvider
         public string modified_by { get; set; }
         public System.DateTime modified_dt { get; set; }
     
+        public virtual Org Org { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OrgAppUser> OrgAppUsers { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OrgUser> OrgUsers { get; set; }
+        public virtual ICollection<OrgClient> OrgClients { get; set; }
     }
 }

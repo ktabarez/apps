@@ -1,2 +1,11 @@
-﻿-new user
-    http://localhost:12859/account/register
+﻿api/account/register
+	POST http://localhost:12859/api/account/register HTTP/1.1
+	Content-Type: application/json
+	{ username: 'firstagain\\kain.tabarez', email: 'kain.tabarez@gmail.com' }
+
+/token
+
+	POST http://localhost:12859/token HTTP/1.1
+	Content-Type: application/x-www-form-urlencoded
+
+	grant_type=password&username=firstagain%5Ckain.tabarez&password=

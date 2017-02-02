@@ -9,7 +9,7 @@ using System.Linq;
 namespace Web.Api
 {
     // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
-    public class ApplicationUserManager : UserManager<User, int>
+    public class ApplicationUserManager : UserManager<OrgUser, int>
     {
         //private bool _supportsUserClaims { get; set; }
         //public override bool SupportsUserClaim
@@ -57,29 +57,46 @@ namespace Web.Api
             _supportsUserSecurityStamp = false;
         }
 
-        public override Task<IdentityResult> CreateAsync(User user)
+        public override Task<IdentityResult> CreateAsync(OrgUser user)
         {
             return base.CreateAsync(user);
         }
 
-        public async override Task<User> FindAsync(string userName, string password)
+        public async override Task<OrgUser> FindAsync(string userName, string password)
         {
             var user = await FindByNameAsync(userName);
 
             if (user == null)
                 return null;
 
-            return (User)user;
+            return (OrgUser)user;
         }
 
-        public async override Task<ClaimsIdentity> CreateIdentityAsync(User user, string authenticationType)
+        public async Task<OrgUser> FindByOrgIdUsername(int orgId, string username)
+        {
+            return await UserStore.FindByOrgIdUsername(orgId, username);
+        }
+
+        public async Task<OrgUser> FindByOrgIdUsernamePassword(int orgId, string username, string password)
+        {
+            var hash = base.PasswordHasher.HashPassword(password);
+
+            var user = await UserStore.FindByOrgIdUsername(orgId, username);
+
+            if (user != null && base.PasswordHasher.VerifyHashedPassword(user.PasswordHash, password) == PasswordVerificationResult.Success)
+                return user;
+
+            return null;
+        }
+
+        public async override Task<ClaimsIdentity> CreateIdentityAsync(OrgUser user, string authenticationType)
         {
             //user.Id = user.SystemUserID;
             //return base.CreateIdentityAsync(user, authenticationType);
 
             if (user == null)
             {
-                throw new ArgumentNullException(typeof(User).Name);
+                throw new ArgumentNullException(typeof(OrgUser).Name);
             }
             var userName = user.UserName;
 
@@ -122,37 +139,37 @@ namespace Web.Api
     }
 
     public class UserStore : //IUserRoleStore<SqlUser>,
-    IUserStore<User, int>,
+    IUserStore<OrgUser, int>,
     //IUserLoginStore<User, int>,
     //IUserClaimStore<SqlUser, int>,
-    IUserPasswordStore<User, int>,
-    IUserSecurityStampStore<User, int>,
-    IQueryableUserStore<User, int>,
+    IUserPasswordStore<OrgUser, int>,
+    IUserSecurityStampStore<OrgUser, int>,
+    IQueryableUserStore<OrgUser, int>,
     //IUserTwoFactorStore<SqlUser, int>,
     //IUserLockoutStore<User, int>,
-    IUserEmailStore<User, int>,
+    IUserEmailStore<OrgUser, int>,
     IDisposable
     {
-        private RepoBase<User> _userRepo;
+        private OrgUserRepo _userRepo;
 
-        public UserStore(RepoBase<User> userRepo)
+        public UserStore(RepoBase<OrgUser> userRepo)
         {
-            _userRepo = userRepo;
+            _userRepo = (OrgUserRepo) userRepo;
         }
 
         /*IQueryableUserStore*/
 
-        public IQueryable<User> Users
+        public IQueryable<OrgUser> Users
         {
             get
             {
-                return (IQueryable<User>)_userRepo.Entities.AsQueryable<User>();
+                return (IQueryable<OrgUser>)_userRepo.Entities.AsQueryable<OrgUser>();
             }
         }
 
         /*IUserStore*/
 
-        public async Task CreateAsync(User user)
+        public async Task CreateAsync(OrgUser user)
         {
             if (user == null)
             {
@@ -189,29 +206,34 @@ namespace Web.Api
             //await _couchbaseClient.SaveChangesAsync().ConfigureAwait(false);
         }
 
-        public async Task<User> FindByIdAsync(int userId)
+        public async Task<OrgUser> FindByIdAsync(int userId)
         {
             return await _userRepo.FindAsync(userId);
         }
 
-        public Task<User> FindByIdAsync(string userId)
+        public Task<OrgUser> FindByIdAsync(string userId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<User> FindByNameAsync(string userName)
+        public Task<OrgUser> FindByNameAsync(string userName)
         {
             _userRepo.Get(i => i.UserName == userName).FirstOrDefault();
 
             var item = _userRepo.Entities.FirstOrDefault(i => i.UserName == userName);
 
-            return Task.FromResult<User>(_userRepo.Entities.FirstOrDefault(i => i.UserName.ToLower().Equals(userName.ToLower())));
+            return Task.FromResult<OrgUser>(_userRepo.Entities.FirstOrDefault(i => i.UserName.ToLower().Equals(userName.ToLower())));
+        }
+
+        public async Task<OrgUser> FindByOrgIdUsername(int orgId, string username)
+        {
+            return await _userRepo.FindByOrgIdUserName(orgId, username);
         }
 
         /// <remarks>
         /// This method assumes that incomming User parameter is tracked in the session. So, this method literally behaves as SaveChangeAsync
         /// </remarks>
-        public async Task UpdateAsync(User user)
+        public async Task UpdateAsync(OrgUser user)
         {
             if (user == null)
             {
@@ -221,7 +243,7 @@ namespace Web.Api
             await _userRepo.UpdateAsync(user);
         }
 
-        public Task DeleteAsync(User user)
+        public Task DeleteAsync(OrgUser user)
         {
             if (user == null)
             {
@@ -233,7 +255,7 @@ namespace Web.Api
 
         /*IUserPasswordStore*/
 
-        public Task<string> GetPasswordHashAsync(User user)
+        public Task<string> GetPasswordHashAsync(OrgUser user)
         {
             if (user == null)
             {
@@ -243,7 +265,7 @@ namespace Web.Api
             return Task.FromResult<string>(String.Empty);//(user.PasswordHash);
         }
 
-        public Task<bool> HasPasswordAsync(User user)
+        public Task<bool> HasPasswordAsync(OrgUser user)
         {
             if (user == null)
             {
@@ -253,7 +275,7 @@ namespace Web.Api
             return Task.FromResult<bool>(true);//(user.PasswordHash != null);
         }
 
-        public Task SetPasswordHashAsync(User user, string passwordHash)
+        public Task SetPasswordHashAsync(OrgUser user, string passwordHash)
         {
             if (user == null)
             {
@@ -266,13 +288,13 @@ namespace Web.Api
 
         /*IUserSecurityStampStore*/
 
-        public Task<string> GetSecurityStampAsync(User user)
+        public Task<string> GetSecurityStampAsync(OrgUser user)
         {
             if (user == null) throw new ArgumentNullException("user");
             return Task.FromResult<string>(user.SecurityStamp.ToString());
         }
 
-        public Task SetSecurityStampAsync(User user, string stamp)
+        public Task SetSecurityStampAsync(OrgUser user, string stamp)
         {
             if (user == null) throw new ArgumentNullException("user");
             user.SecurityStamp = stamp;
@@ -281,22 +303,22 @@ namespace Web.Api
 
         /*IUserEmailStore*/
 
-        public async Task<User> FindByEmailAsync(string email)
+        public async Task<OrgUser> FindByEmailAsync(string email)
         {
             if (email == null)
             {
                 throw new ArgumentNullException("email");
             }
 
-            User user = _userRepo.Entities.FirstOrDefault(i => i.Email.ToLower().Equals(email));
+            OrgUser user = _userRepo.Entities.FirstOrDefault(i => i.Email.ToLower().Equals(email));
 
             if (user == null)
-                return default(User);
+                return default(OrgUser);
 
-            return await Task.FromResult<User>(user);
+            return await Task.FromResult<OrgUser>(user);
         }
 
-        public async Task<string> GetEmailAsync(User user)
+        public async Task<string> GetEmailAsync(OrgUser user)
         {
             if (user == null)
             {
@@ -306,7 +328,7 @@ namespace Web.Api
             return await Task.FromResult(user.Email);
         }
 
-        public async Task<bool> GetEmailConfirmedAsync(User user)
+        public async Task<bool> GetEmailConfirmedAsync(OrgUser user)
         {
             if (user == null)
             {
@@ -324,14 +346,14 @@ namespace Web.Api
             return await Task.FromResult<bool>(false);// confirmation != null;
         }
 
-        public Task SetEmailAsync(User user, string email)
+        public Task SetEmailAsync(OrgUser user, string email)
         {
             user.Email = email;
 
             return _userRepo.UpdateAsync(user);
         }
 
-        public async Task SetEmailConfirmedAsync(User user, bool confirmed)
+        public async Task SetEmailConfirmedAsync(OrgUser user, bool confirmed)
         {
             await Task.FromResult<int>(0);
             //if (user == null)

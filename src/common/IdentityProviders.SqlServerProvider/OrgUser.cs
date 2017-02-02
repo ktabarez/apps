@@ -17,13 +17,28 @@ namespace IdentityProviders.SqlServerProvider
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public OrgUser()
         {
+            this.OrgAppUsers = new HashSet<OrgAppUser>();
             this.OrgGlobalUserRoles = new HashSet<OrgGlobalUserRole>();
+            this.OrgUserRefreshTokens = new HashSet<OrgUserRefreshToken>();
             this.OrgUserRoles = new HashSet<OrgUserRole>();
         }
     
         public int Id { get; set; }
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public string PasswordHash { get; set; }
+        public string SecurityStamp { get; set; }
+        public bool IsLockoutEnabled { get; set; }
+        public bool IsTwoFactorEnabled { get; set; }
+        public int AccessFailedCount { get; set; }
+        public Nullable<System.DateTime> LockoutEndDateUtc { get; set; }
+        public string Claims { get; set; }
+        public string Logins { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Suffix { get; set; }
         public int OrgId { get; set; }
-        public int UserId { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         public string created_by { get; set; }
@@ -33,8 +48,11 @@ namespace IdentityProviders.SqlServerProvider
     
         public virtual Org Org { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OrgAppUser> OrgAppUsers { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrgGlobalUserRole> OrgGlobalUserRoles { get; set; }
-        public virtual User User { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OrgUserRefreshToken> OrgUserRefreshTokens { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrgUserRole> OrgUserRoles { get; set; }
     }

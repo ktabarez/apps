@@ -9,14 +9,14 @@ namespace IdentityProviders.SqlServerProvider
     public class ClaimsGenerator
     {
         private ClaimsIdentity _oAuthIdentity;
-        private User _user;
+        private OrgUser _user;
         private OrgUserRepo _orgUserRepo;
         private GlobalUserRoleRepo _orgGlobalUserRoleRepo;
         private OrgUserRoleRepo _orgUserRoleRepo;
         private OrgAppUserAuthIpRepo _orgAppUserAuthIpRepo;
         private OrgAppUserRoleRepo _orgAppUserRoleRepo;
         private OrgAppUserMetadataRepo _orgAppUserMetadata;
-        public ClaimsGenerator(User user,
+        public ClaimsGenerator(OrgUser user,
                                         ClaimsIdentity aAuthIdentity,
                                         IRepository<OrgUser> orgUserRepo,
                                         IRepository<OrgUserRole> orgUserRoleRepo,
@@ -40,11 +40,12 @@ namespace IdentityProviders.SqlServerProvider
             _oAuthIdentity.AddClaim(new Claim("orgUsers", JsonConvert.SerializeObject(orgUsers.Select(i => new
             {
                 OrgnName = i.Org.OrgName,
-                UserName = i.User.UserName,
+                UserName = i.UserName,
                 IsActive = !i.Org.IsActive ? false : i.IsActive,
                 IsDeleted = i.Org.IsDeleted ? true : i.IsDeleted
             }))));
         }
+
         public async Task GenerateGlobalUserRolesAsync()
         {
             var userGlobalRoles = await _orgGlobalUserRoleRepo.GetAsync(_user.Id);

@@ -126,7 +126,10 @@ namespace Web.Api
 
             /*sql repositories*/
 
-            builder.Register(c => new SystemUserRepo(c.Resolve<AppFrameworkEntities>())).As<IRepository<User>>().OnActivated(i => i.Instance.OnDbError += HandleOnDbError).InstancePerRequest();
+            builder.Register(c => new PasswordHashProvider()).As<IPasswordHashPovider>();
+            builder.Register(c => new OrgClientRepo(c.Resolve<AppFrameworkEntities>())).As<IRepository<OrgClient>>().OnActivated(i => i.Instance.OnDbError += HandleOnDbError).InstancePerRequest();
+            builder.Register(c => new RefreshTokenRepo(c.Resolve<AppFrameworkEntities>())).As<IRepository<OrgUserRefreshToken>>().OnActivated(i => i.Instance.OnDbError += HandleOnDbError).InstancePerRequest();
+            builder.Register(c => new SystemUserRepo(c.Resolve<AppFrameworkEntities>())).As<IRepository<OrgUser>>().OnActivated(i => i.Instance.OnDbError += HandleOnDbError).InstancePerRequest();
             builder.Register(c => new OrgRepo(c.Resolve<AppFrameworkEntities>())).As<IRepository<Org>>().OnActivated(i => i.Instance.OnDbError += HandleOnDbError).InstancePerRequest();
             builder.Register(c => new OrgRoleRepo(c.Resolve<AppFrameworkEntities>())).As<IRepository<OrgRole>>().OnActivated(i => i.Instance.OnDbError += HandleOnDbError).InstancePerRequest();
             builder.Register(c => new OrgUserRepo(c.Resolve<AppFrameworkEntities>())).As<IRepository<OrgUser>>().OnActivated(i => i.Instance.OnDbError += HandleOnDbError).InstancePerRequest();
@@ -144,12 +147,40 @@ namespace Web.Api
 
         public static void RegisterOwin(IAppBuilder app)
         {
+            app.CreatePerOwinContext<IPasswordHashPovider>(() =>
+            {
+                return new PasswordHashProvider();
+            });
+
             app.CreatePerOwinContext<AppFrameworkEntities>((options, owinContext) =>
             {
                 return new AppFrameworkEntities();
             });
 
-            app.CreatePerOwinContext<RepoBase<User>>((options, owinContext) =>
+            app.CreatePerOwinContext<RepoBase<OrgClient>>((options, owinContext) =>
+            {
+
+                var logService = owinContext.Get<ILogServiceAsync<ILogServiceSettings>>();
+                var iocContainer = owinContext.ToLifetimeScope<LifetimeScope>("autofac:OwinLifetimeScope");
+
+                var logSeddrvice = iocContainer.GetService(typeof(ILogServiceAsync<ILogServiceSettings>)) as ILogServiceAsync<ILogServiceSettings>;
+
+                return new OrgClientRepo(owinContext.Get<AppFrameworkEntities>());
+            });
+
+            app.CreatePerOwinContext<RepoBase<OrgUserRefreshToken>>((options, owinContext) =>
+            {
+
+                var logService = owinContext.Get<ILogServiceAsync<ILogServiceSettings>>();
+                var iocContainer = owinContext.ToLifetimeScope<LifetimeScope>("autofac:OwinLifetimeScope");
+
+                var logSeddrvice = iocContainer.GetService(typeof(ILogServiceAsync<ILogServiceSettings>)) as ILogServiceAsync<ILogServiceSettings>;
+
+                return new RefreshTokenRepo(owinContext.Get<AppFrameworkEntities>());
+            });
+
+
+            app.CreatePerOwinContext<RepoBase<OrgUser>>((options, owinContext) =>
             {
 
                 var logService = owinContext.Get<ILogServiceAsync<ILogServiceSettings>>();
@@ -267,7 +298,7 @@ namespace Web.Api
             });
             app.CreatePerOwinContext<UserStore>((options, owinContext) =>
             {
-                return new UserStore(owinContext.Get<RepoBase<User>>());
+                return new UserStore(owinContext.Get<RepoBase<OrgUser>>());
             });
 
             app.CreatePerOwinContext<ApplicationUserManager>((options, owinContext) =>
@@ -281,7 +312,7 @@ namespace Web.Api
                 var apm = new ApplicationUserManager(userStore);
 
                 // Configure validation logic for usernames
-                manager.UserValidator = new UserValidator<User, int>(manager)
+                manager.UserValidator = new UserValidator<OrgUser, int>(manager)
                 {
                     AllowOnlyAlphanumericUserNames = false,
                     RequireUniqueEmail = true
@@ -300,7 +331,7 @@ namespace Web.Api
 
                 if (dataProtectionProvider != null)
                 {
-                    manager.UserTokenProvider = new DataProtectorTokenProvider<User, int>(dataProtectionProvider.Create("ASP.NET Identity"));
+                    manager.UserTokenProvider = new DataProtectorTokenProvider<OrgUser, int>(dataProtectionProvider.Create("ASP.NET Identity"));
                 }
 
                 return manager;
@@ -308,7 +339,7 @@ namespace Web.Api
 
             app.CreatePerOwinContext<UserStore>((options, owinContext) =>
             {
-                return new UserStore(owinContext.Get<RepoBase<User>>());
+                return new UserStore(owinContext.Get<RepoBase<OrgUser>>());
             });
 
             var context = new OwinContext(app.Properties);

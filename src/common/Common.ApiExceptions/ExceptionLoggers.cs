@@ -96,7 +96,7 @@ namespace Common.ApiExceptions
 
         public override Task LogAsync(ExceptionLoggerContext context, CancellationToken cancellationToken)
         {
-            return Task.Factory.StartNew(async () =>
+            return Task.Factory.StartNew(() =>
             {
                 try
                 {

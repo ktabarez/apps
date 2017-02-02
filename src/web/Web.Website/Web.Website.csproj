@@ -17,10 +17,12 @@
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
-    <IISExpressAnonymousAuthentication />
-    <IISExpressWindowsAuthentication />
+    <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
+    <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -140,6 +142,8 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\MemberFeedbackController.cs" />
+    <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -148,19 +152,23 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="apps\projectRequests\app.js" />
-    <Content Include="apps\projectRequests\mainviewmodel.js" />
-    <Content Include="apps\projectRequests\requests\new-request-form.html" />
-    <Content Include="apps\projectRequests\requests\newrequest.html" />
-    <Content Include="apps\projectRequests\requests\newrequest.js">
+    <Content Include="app\app.js" />
+    <Content Include="app\mainviewmodel.js" />
+    <Content Include="app\memberFeedback\index.html" />
+    <Content Include="app\memberFeedback\index.js">
+      <DependentUpon>index.html</DependentUpon>
+    </Content>
+    <Content Include="app\projectRequests\requests\new-request-form.html" />
+    <Content Include="app\projectRequests\requests\newrequest.html" />
+    <Content Include="app\projectRequests\requests\newrequest.js">
       <DependentUpon>newrequest.html</DependentUpon>
     </Content>
-    <Content Include="apps\projectRequests\requests\request.html" />
-    <Content Include="apps\projectRequests\requests\request.js">
+    <Content Include="app\projectRequests\requests\request.html" />
+    <Content Include="app\projectRequests\requests\request.js">
       <DependentUpon>request.html</DependentUpon>
     </Content>
-    <Content Include="apps\projectRequests\requests\requests.html" />
-    <Content Include="apps\projectRequests\requests\requests.js">
+    <Content Include="app\projectRequests\requests\requests.html" />
+    <Content Include="app\projectRequests\requests\requests.js">
       <DependentUpon>requests.html</DependentUpon>
     </Content>
     <Content Include="assets\css\4095-rtl.min.css" />
@@ -312,6 +320,8 @@
     <Content Include="Views\MemberFeedback\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="app\home\" />
+    <Folder Include="app\settings\" />
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
   </ItemGroup>
@@ -347,6 +357,13 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

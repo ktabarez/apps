@@ -107,7 +107,7 @@ var Select2Control = function (options) {
 	}
 }
 
-var app = angular.module('projectApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'ngSanitize']);
+var app = angular.module('dashboardApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'ngSanitize']);
 
 
 /*
@@ -149,7 +149,7 @@ app.directive('contenteditable', ['$sce', function($sce) {
 app.directive('newRequestForm', function () {
 	return {
 		restrict: 'E',
-		templateUrl: 'apps/projectrequests/requests/new-request-form.html'
+		templateUrl: 'app/projectRequests/requests/new-request-form.html'
 	}
 });
 
@@ -481,17 +481,17 @@ app.config(function ($routeProvider, $locationProvider, $httpProvider) {
 	/****routes****/
 
 	$routeProvider.when('/', {
-		templateUrl: '/apps/projectrequests/requests/requests.html',
+		templateUrl: '/app/projectRequests/requests/requests.html',
 		cache: false,
 	});
 
 	$routeProvider.when('/new', {
-		templateUrl: '/apps/projectrequests/requests/newrequest.html',
+		templateUrl: '/app/projectRequests/requests/newrequest.html',
 		cache: false,
 	});
 
 	$routeProvider.when('/:projectRequestId', {
-		templateUrl: '/apps/projectrequests/requests/request.html',
+		templateUrl: '/app/projectRequests/requests/request.html',
 		cache: false,
 	});
 
@@ -518,8 +518,8 @@ app.run(function ($templateCache, $http, $rootScope, authenticationService, proj
 		}
 	});
 
-    //$http.get('/apps/projectrequests/requests/requests.html', { cache: $templateCache });
-    //$http.get('/apps/godviewapp/dashboard/appsecurity.html', { scache: $templateCache });
+    //$http.get('/app/projectRequests/requests/requests.html', { cache: $templateCache });
+    //$http.get('/apps/godviewapp/appsecurity.html', { scache: $templateCache });
 
     $rootScope.$on("$includeContentLoaded", function (event) {
         console.log({

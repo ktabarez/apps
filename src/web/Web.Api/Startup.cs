@@ -1,5 +1,7 @@
 ﻿using Autofac;
 using Autofac.Integration.WebApi;
+using Common.Repository;
+using IdentityProviders.SqlServerProvider;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Infrastructure;
 using Microsoft.Owin.Security.OAuth;
@@ -7,7 +9,9 @@ using Owin;
 using System;
 using System.Configuration;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Web.Http;
+using Microsoft.AspNet.Identity.Owin;
 
 [assembly: OwinStartup(typeof(Web.Api.Startup))]
 
@@ -57,30 +61,13 @@ namespace Web.Api
                 TokenEndpointPath = new PathString("/Token"),
                 Provider = new ApplicationOAuthProvider(PublicClientId),
                 AuthorizeEndpointPath = new PathString("/api/Account/ExternalLogin"),
-                AccessTokenExpireTimeSpan = TimeSpan.FromDays(Convert.ToInt32(ConfigurationManager.AppSettings["security.accesstokenexpirationindays"])), //TimeSpan.FromDays(14),//TODO: configure token expiration time in web config
-                //RefreshTokenProvider = new RefreshTokenProvider(),
-                //RefreshTokenProvider = new AuthenticationTokenProvider()
-                //{
-                //    OnCreate = CreateRefreshToken,
-                //    OnReceive = RecieveRefreshToken  
-                //},
+                AccessTokenExpireTimeSpan = TimeSpan.FromDays(Convert.ToInt32(ConfigurationManager.AppSettings["security.accesstokenexpirationinminutes"])), //TimeSpan.FromDays(14),//TODO: configure token expiration time in web config
+                RefreshTokenProvider = new RefreshTokenProvider(),
                 AllowInsecureHttp = true
             };
 
             // Enable the application to use bearer tokens to authenticate users
             app.UseOAuthBearerTokens(OAuthOptions);
-        }
-
-        private static void RecieveRefreshToken(AuthenticationTokenReceiveContext obj)
-        {
-            //throw new NotImplementedException();  
-            obj.DeserializeTicket(obj.Token);
-        }
-
-        private static void CreateRefreshToken(AuthenticationTokenCreateContext obj)
-        {
-            // throw new NotImplementedException();  
-            obj.SetToken(obj.SerializeTicket());
         }
     }
 }

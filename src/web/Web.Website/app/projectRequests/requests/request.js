@@ -37,7 +37,7 @@ var RequestViewModel = function ($routeParams, $scope, $timeout, $uibModal, auth
 	self.editProjectRequest = function () {
 		$uibModal.open({
 			keyboard: true,
-			templateUrl: 'apps/projectrequests/requests/new-request-form.html',
+			templateUrl: 'app/projectRequests/requests/new-request-form.html',
 			backdrop: 'static'
 		});
 	}

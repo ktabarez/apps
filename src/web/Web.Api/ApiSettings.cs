@@ -11,7 +11,7 @@ namespace Web.Api
 		public const string URLS_WEB = "projectrequests.weburl";
 		public const string URLS_API = "projectrequests.apiurl";
 
-		public const string SECURITY_ACCESSTOKENEXPIRATIONINDAYS = "security.accesstokenexpirationindays";
+		public const string SECURITY_ACCESSTOKENEXPIRATIONINMINUTES= "security.accesstokenexpirationindays";
 
 		public Dictionary<string, string> Settings
 		{

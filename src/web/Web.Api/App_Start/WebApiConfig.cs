@@ -1,4 +1,5 @@
 ﻿using Common.ApiExceptions;
+using Common.ApiFilters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,10 +17,11 @@ namespace Web.Api
             // Configure Web API to use only bearer token authentication.
             //config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
 
+
             config.Services.Add(typeof(IExceptionLogger), new DefaultExceptionLogger(DefaultExceptionLogger.HandleOnExceptionLoggged));
 
             config.EnableCors((new EnableCorsAttribute("*", "*", "*")));
-
+            config.Filters.Add(new RoleAuthorizeFilter(globalRoles: new [] { "wtf" }));
             // Web API routes
             config.MapHttpAttributeRoutes();
 

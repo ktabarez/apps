@@ -20,17 +20,15 @@ BEGIN
 END
 
 if object_id('Auth.[OrgAppUserMetadata]', 'U') is not null
-	drop table OrgAppUserMetadata
+	drop table [auth].OrgAppUserMetadata
 if object_id('Auth.[UserRefreshToken]', 'U') is not null
-	drop table UserRefreshToken
+	drop table [auth].UserRefreshToken
 if object_id('Auth.OrgGlobalUserRole', 'U') is not null
 	drop table [auth].[OrgGlobalUserRole]
 if object_id('Auth.OrgGlobalRole', 'U') is not null
 	drop table [auth].[OrgGlobalRole]
 if object_id('Auth.OrgUserRole', 'U') is not null
 	drop table [auth].[OrgUserRole]
-if object_id('Auth.OrgUser', 'U') is not null
-	drop table [auth].[OrgUser]
 if object_id('Auth.OrgRole', 'U') is not null
 	drop table [auth].[OrgRole]
 if object_id('Auth.OrgAppUserAuthIp', 'U') is not null
@@ -43,50 +41,16 @@ if object_id('Auth.OrgAppRole', 'U') is not null
 	drop table [auth].[OrgAppRole]
 if object_id('Auth.OrgApp', 'U') is not null
 	drop table [auth].[OrgApp]
+if object_id('Auth.[OrgUserRefreshToken]', 'U') is not null
+	drop table [auth].OrgUserRefreshToken
+if object_id('Auth.[OrgClient]', 'U') is not null
+	drop table [auth].OrgClient
+if object_id('Auth.[OrgClientType]', 'U') is not null
+	drop table [auth].OrgClientType
+if object_id('Auth.OrgUser', 'U') is not null
+	drop table [auth].[OrgUser]
 if object_id('Auth.Org', 'U') is not null
 	drop table [auth].[Org]
-if object_id('Auth.User', 'U') is not null
-	drop table [auth].[User]
-if object_id('Auth.[Logs]', 'U') is not null
-	drop table logs
-
-
-create table [auth].[User]
-(
-	Id int not null identity(1,1)
-	,UserName varchar(250) not null constraint uqc_User_UserName unique
-	,Email varchar(250)
-	,PhoneNumber varchar(250) null
-	,PasswordHash varchar(max) not null
-	,SecurityStamp varchar(max) not null
-	,IsLockoutEnabled bit  not null
-	,IsTwoFactorEnabled bit not null
-	,AccessFailedCount int not null
-	,LockoutEndDateUtc datetime null
-	,Claims varchar(max) null
-	,Logins varchar(max) null
-	,FirstName varchar(250) null
-	,LastName varchar(250) null
-	,Suffix varchar(250) null
-	,IsActive bit not null
-	,IsDeleted bit not null
-	,created_by varchar(50) not null
-	,created_dt datetime not null
-	,modified_by varchar(50) not null
-	,modified_dt datetime not null
-
-	constraint pk_User_Id primary key (Id asc)	
-)
-
-alter table [auth].[User] add constraint [df_User_IsLockoutEnabled] default (0) for [IsLockoutEnabled]
-alter table [auth].[User] add constraint [df_User_IsTwoFactorEnabled] default (0) for [IsTwoFactorEnabled]
-alter table [auth].[User] add constraint [df_User_AccessFailedCount] default (0) for [AccessFailedCount]
-alter table [auth].[User] add constraint [df_User_IsActive] default (0) for [IsActive]
-alter table [auth].[User] add constraint [df_User_IsDeleted] default (0) for [IsDeleted]
-alter table [auth].[User] add constraint [df_User_created_by] default (user_name()) for [created_by]
-alter table [auth].[User] add constraint [df_User_created_dt] default (getdate()) for [created_dt]
-alter table [auth].[User] add constraint [df_User_modified_by] default (user_name()) for [modified_by]
-alter table [auth].[User] add constraint [df_User_modified_dt] default (getdate()) for [modified_dt]
 
 create table [auth].Org
 (
@@ -108,6 +72,101 @@ alter table [auth].[Org] add constraint [df_Org_created_dt] default (getdate()) 
 alter table [auth].[Org] add constraint [df_Org_modified_by] default (user_name()) for [modified_by]
 alter table [auth].[Org] add constraint [df_Org_modified_dt] default (getdate()) for [modified_dt]
 
+create table [auth].[OrgUser]
+(
+	Id int not null identity(1,1)
+	,UserName varchar(250) not null
+	,Email varchar(250)
+	,PhoneNumber varchar(250) null
+	,PasswordHash varchar(max) null
+	,SecurityStamp varchar(max) null
+	,IsLockoutEnabled bit  not null
+	,IsTwoFactorEnabled bit not null
+	,AccessFailedCount int not null
+	,LockoutEndDateUtc datetime null
+	,Claims varchar(max) null
+	,Logins varchar(max) null
+	,FirstName varchar(250) null
+	,LastName varchar(250) null
+	,Suffix varchar(250) null
+	,OrgId int not null
+		constraint fk_OrgUser_Org_Id references [auth].[Org](Id)
+	,IsActive bit not null
+	,IsDeleted bit not null
+	,created_by varchar(50) not null
+	,created_dt datetime not null
+	,modified_by varchar(50) not null
+	,modified_dt datetime not null
+
+	constraint pk_User_Id primary key (Id asc)	
+)
+
+alter table [auth].[OrgUser] add constraint [df_OrgUser_IsLockoutEnabled] default (0) for [IsLockoutEnabled]
+alter table [auth].[OrgUser] add constraint [df_OrgUser_IsTwoFactorEnabled] default (0) for [IsTwoFactorEnabled]
+alter table [auth].[OrgUser] add constraint [df_OrgUser_AccessFailedCount] default (0) for [AccessFailedCount]
+alter table [auth].[OrgUser] add constraint [df_OrgUser_IsActive] default (0) for [IsActive]
+alter table [auth].[OrgUser] add constraint [df_OrgUser_IsDeleted] default (0) for [IsDeleted]
+alter table [auth].[OrgUser] add constraint [df_OrgUser_created_by] default (user_name()) for [created_by]
+alter table [auth].[OrgUser] add constraint [df_OrgUser_created_dt] default (getdate()) for [created_dt]
+alter table [auth].[OrgUser] add constraint [df_OrgUser_modified_by] default (user_name()) for [modified_by]
+alter table [auth].[OrgUser] add constraint [df_OrgUser_modified_dt] default (getdate()) for [modified_dt]
+
+/*************************************
+* Organization Client
+*************************************/
+
+create table [auth].[OrgClientType]
+(
+	Id int not null identity(1,1)
+	,Name varchar(250) not null unique
+	,OrgId int not null
+		constraint fk_OrgClientType_Org_Id references [auth].[Org](Id)
+	,IsActive bit not null
+	,IsDeleted bit not null
+	,created_by varchar(50) not null
+	,created_dt datetime not null
+	,modified_by varchar(50) not null
+	,modified_dt datetime not null
+
+	constraint pk_OrgClientType_Id primary key (Id asc)
+)
+
+create table [auth].[OrgClient]
+(
+	Id varchar(250) not null
+	,Secret varchar(max) null
+	,Name varchar(250) not null unique
+	,ClientTypeId int not null
+		constraint fk_OrgClient_OrgClientType_Id references [auth].[OrgClientType](Id)
+	,OrgId int not null
+		constraint fk_OrgClient_Org_Id references [auth].[Org](Id)
+	,RefreshTokenLifeTime int not null
+	,AllowedOrigin varchar(100) not null
+
+	,IsActive bit not null
+	,IsDeleted bit not null
+	,created_by varchar(50) not null
+	,created_dt datetime not null
+	,modified_by varchar(50) not null
+	,modified_dt datetime not null
+
+	constraint pk_OrgClient_Id_OrgId primary key (Id asc)
+)
+
+create table auth.OrgUserRefreshToken
+(
+	Id varchar(250) not null
+	,Subject varchar(250) not null
+	,OrgClientId varchar(250) not null
+		constraint fk_OrgUserRefreshToken_OrgClient_Id references [auth].[OrgClient](Id)
+	,OrgUserId int not null
+		constraint fk_OrgUserRefreshToken_OrgUser_Id references [auth].[OrgUser](Id)
+	,IssuedUtc datetime not null
+	,ExpiresUtc datetime not null
+	,ProtectedTicket varchar(max) not null
+
+	constraint pk_OrgUserRefreshToken_Id primary key (Id asc)
+)
 
 /*************************************
 * Organization Roles and Users
@@ -159,30 +218,6 @@ alter table [auth].[OrgRole] add constraint [df_OrgRole_created_dt] default (get
 alter table [auth].[OrgRole] add constraint [df_OrgRole_modified_by] default (user_name()) for [modified_by]
 alter table [auth].[OrgRole] add constraint [df_OrgRole_modified_dt] default (getdate()) for [modified_dt]
 
-create table [auth].OrgUser
-(
-	Id int not null identity(1,1)
-	,OrgId int not null
-		constraint fk_OrgUser_Org_Id references auth.Org(Id)
-	,UserId int not null
-		constraint fk_OrgUser_User_Id references auth.[User](Id)
-	,IsActive bit not null
-	,IsDeleted bit not null
-	,created_by varchar(50) not null
-	,created_dt datetime not null
-	,modified_by varchar(50) not null
-	,modified_dt datetime not null
-
-	constraint pk_OrgUser_Id primary key (Id asc)
-)
-
-alter table [auth].[OrgUser] add constraint [df_OrgUser_IsActive] default (0) for [IsActive]
-alter table [auth].[OrgUser] add constraint [df_OrgUser_IsDeleted] default (0) for [IsDeleted]
-alter table [auth].[OrgUser] add constraint [df_OrgUser_created_by] default (user_name()) for [created_by]
-alter table [auth].[OrgUser] add constraint [df_OrgUser_created_dt] default (getdate()) for [created_dt]
-alter table [auth].[OrgUser] add constraint [df_OrgUser_modified_by] default (user_name()) for [modified_by]
-alter table [auth].[OrgUser] add constraint [df_OrgUser_modified_dt] default (getdate()) for [modified_dt]
-
 create table [auth].OrgGlobalUserRole
 (
 	Id int not null identity(1,1)
@@ -197,7 +232,7 @@ create table [auth].OrgGlobalUserRole
 	,modified_by varchar(50) not null
 	,modified_dt datetime not null
 
-	constraint pk_OrgGlobalUserRole_Id primary key (Id asc)
+	constraint cpk_OrgGlobalUserRole_OrgUserId_OrgGlobalRoleId primary key clustered (OrgUserId, OrgGlobalRoleId)
 )
 
 alter table [auth].[OrgGlobalUserRole] add constraint [df_OrgGlobalUserRole_IsActive] default (0) for [IsActive]
@@ -221,7 +256,7 @@ create table [auth].OrgUserRole
 	,modified_by varchar(50) not null
 	,modified_dt datetime not null
 
-	constraint pk_OrgUserRole_Id primary key (Id asc)
+	constraint cpk_OrgUserRole_OrgUserId_OrgRoleId primary key (OrgUserId, OrgRoleId)
 )
 
 alter table [auth].[OrgUserRole] add constraint [df_OrgUserRole_IsActive] default (0) for [IsActive]
@@ -284,7 +319,7 @@ create table [auth].OrgAppUser
 (
 	Id int not null identity(1,1)
 	,UserId int not null
-		constraint fk_OrgAppUser_User_Id references auth.[User](id)
+		constraint fk_OrgAppUser_User_Id references auth.[OrgUser](id)
 	,OrgAppId int not null 
 		constraint fk_OrgAppUser_OrgApp_Id references auth.OrgApp(Id)
 	,IsActive bit not null
@@ -318,7 +353,7 @@ create table [auth].OrgAppUserRole
 	,modified_by varchar(50) not null
 	,modified_dt datetime not null
 
-	constraint pk_OrgAppUserRole_Id primary key (Id asc)
+	constraint cpk_OrgAppUserRole_OrgAppUserId_OrgAppRoleId primary key (OrgAppUserId, OrgAppRoleId)
 )
 
 alter table [auth].[OrgAppUserRole] add constraint [df_OrgAppUserRole_IsActive] default (0) for [IsActive]
@@ -341,7 +376,7 @@ create table [auth].OrgAppUserAuthIp
 	,modified_by varchar(50) not null
 	,modified_dt datetime not null
 
-	constraint pk_OrgAppUserAuthIp_Id primary key (Id asc)
+	constraint pk_OrgAppUserAuthIp_OrgAppUserId_Ip primary key (OrgAppUserId, Ip)
 )
 
 alter table [auth].[OrgAppUserAuthIp] add constraint [df_OrgAppUserAuthIp_IsActive] default (0) for [IsActive]
@@ -390,3 +425,94 @@ alter table [auth].[UserRefreshToken] add constraint [df_UserRefreshToken_create
 alter table [auth].[UserRefreshToken] add constraint [df_UserRefreshToken_created_dt] default (getdate()) for [created_dt]
 alter table [auth].[UserRefreshToken] add constraint [df_UserRefreshToken_modified_by] default (user_name()) for [modified_by]
 alter table [auth].[UserRefreshToken] add constraint [df_UserRefreshToken_modified_dt] default (getdate()) for [modified_dt]
+
+
+insert into auth.org select 'mfcu', 1, 0, 'someone', GETUTCDATE(), 'someone', GETUTCDATE()
+
+insert into auth.OrgClientType select 'Native - Confidential', 1, 1, 0, 'someone', getutcdate(), 'someone', GETUTCDATE()
+insert into auth.OrgClientType select 'JavaScript - Nonconfidential', 1,  1, 0, 'someone', getutcdate(), 'someone', GETUTCDATE()
+insert into auth.OrgClient select 'webApi', '123@', 'backend api client', 1, 1, 7200, '*', 1, 0, 'someone', getutcdate(), 'someone', GETUTCDATE()
+insert into auth.OrgClient select 'ngDashboardApp', '1234', 'angular app', 2, 1, 7200, '*', 1, 0, 'someone', getutcdate(), 'someone', GETUTCDATE()
+
+
+insert into auth.OrgGlobalRole select 1, 'godmode', 1, 0, 'me', GETUTCDATE(), 'me', GETUTCDATE()
+
+--create admin user by directly calling the api using postman or fiddler then uncomment code below
+
+/*
+insert into auth.OrgGlobalUserRole select 1, 1,  1, 0, 'me', GETUTCDATE(), 'me', GETUTCDATE()
+
+insert into auth.OrgApp select 1, 'memberFeedback', 1, 0, 'me', GETUTCDATE(), 'me', GETUTCDATE()
+
+insert into auth.OrgAppRole select 1, 'admin', 1, 0, 'me', GETUTCDATE(), 'me', GETUTCDATE()
+insert into auth.OrgAppRole select 1, 'assignable', 1, 0, 'me', GETUTCDATE(), 'me', GETUTCDATE()
+
+select '{ "username": "FIRST_AGAIN\\' + domainlogin + '","email": "' + emailaddress + '", "orgId": 1 },' from MemberFeedback.mbr.CNFG_SystemUser
+
+insert into auth.OrgAppUser
+select ou.Id, 1, 1, 0, 'me', GETUTCDATE(), 'me', GETUTCDATE()
+from MemberFeedback.mbr.CNFG_SystemUser mu
+	join AppFramework.auth.OrgUser ou
+		on mu.EmailAddress = ou.Email
+
+
+insert into auth.OrgAppUserRole
+select oau.Id, 2, 1, 0, 'me', GETUTCDATE(), 'me', GETUTCDATE()
+from MemberFeedback.mbr.CNFG_SystemUser mu
+	join AppFramework.auth.OrgUser ou
+		on mu.EmailAddress = ou.Email
+		and mu.boolIsAssignable = 1
+	join AppFramework.auth.OrgAppUser oau
+		on ou.Id = oau.UserId
+
+insert into auth.OrgAppUserRole
+select oau.Id, 1, 1, 0, 'me', GETUTCDATE(), 'me', GETUTCDATE()
+from MemberFeedback.mbr.CNFG_SystemUser mu
+	join AppFramework.auth.OrgUser ou
+		on mu.EmailAddress = ou.Email
+		and mu.boolIsAdmin = 1
+	join AppFramework.auth.OrgAppUser oau
+		on ou.Id = oau.UserId
+*/
+
+--select * from auth.org
+--select * from auth.OrgUser
+--select * from auth.OrgClient
+--select * from auth.OrgUserRefreshToken
+--select * from auth.OrgGlobalRole
+--select * from auth.OrgGlobalUserRole
+--select * from auth.OrgApp
+--select * from auth.OrgAppRole
+--select * from auth.OrgAppUser
+--select * from auth.OrgAppUserRole
+
+select o.OrgName
+	,'global role' 'RoleType'
+	,null 'AppName'
+	,ou.UserName
+	,ogr.Name 'Role'
+from auth.Org o
+	left join auth.OrgUser ou	
+		on o.Id = ou.Id
+	left join auth.OrgGlobalUserRole gur
+		on ou.Id = gur.OrgUserId
+		left join auth.OrgGlobalRole ogr
+			on gur.OrgGlobalRoleId = ogr.Id
+union
+select o.OrgName
+	,'app role' 'RoleType'
+	,oa.AppName
+	,ou.UserName
+	,oar.Name 'Role'
+from auth.Org o
+	join auth.OrgApp oa
+		on o.Id = oa.OrgId
+	join auth.OrgAppUser oau
+		on oa.Id = oau.OrgAppId
+	join auth.OrgUser ou
+		on oau.UserId = ou.Id
+	join auth.OrgAppUserRole oaur
+		on oau.id = oaur.OrgAppUserId
+	join auth.OrgAppRole oar
+		on oaur.OrgAppRoleId = oar.Id
+order by 3 asc

@@ -32,12 +32,15 @@ namespace IdentityProviders.SqlServerProvider
         public virtual DbSet<OrgAppUserAuthIp> OrgAppUserAuthIps { get; set; }
         public virtual DbSet<OrgAppUserMetadata> OrgAppUserMetadatas { get; set; }
         public virtual DbSet<OrgAppUserRole> OrgAppUserRoles { get; set; }
+        public virtual DbSet<OrgClient> OrgClients { get; set; }
+        public virtual DbSet<OrgClientType> OrgClientTypes { get; set; }
         public virtual DbSet<OrgGlobalRole> OrgGlobalRoles { get; set; }
         public virtual DbSet<OrgGlobalUserRole> OrgGlobalUserRoles { get; set; }
         public virtual DbSet<OrgRole> OrgRoles { get; set; }
         public virtual DbSet<OrgUser> OrgUsers { get; set; }
+        public virtual DbSet<OrgUserRefreshToken> OrgUserRefreshTokens { get; set; }
         public virtual DbSet<OrgUserRole> OrgUserRoles { get; set; }
-        public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
     }
 }

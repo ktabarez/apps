@@ -4,12 +4,11 @@ using Common.Repository;
 using Extensions.ClaimExtensions;
 using Extensions.WebApiDependencyResolverExtension;
 using IdentityProviders.SqlServerProvider;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -22,6 +21,8 @@ namespace Web.Api
     {
         private readonly string _publicClientId;
 
+        private ILogServiceAsync<ILogServiceSettings> _logService;
+
         public ApplicationOAuthProvider(string publicClientId)
         {
             if (publicClientId == null)
@@ -30,59 +31,136 @@ namespace Web.Api
             }
 
             _publicClientId = publicClientId;
+
+            _logService = GlobalConfiguration.Configuration.DependencyResolver.GetService<ILogServiceAsync<ILogServiceSettings>>();
         }
 
-        public static AuthenticationProperties CreateProperties(User user)
+        public static AuthenticationProperties CreateProperties(OrgUser user, OAuthGrantResourceOwnerCredentialsContext context)
         {
-            IDictionary<string, string> data = new Dictionary<string, string>
-            {
-                { "domainLogin", user.UserName },
-                { "userName", user.UserName },
-                { "fullName", user.Email },
+            return new AuthenticationProperties(new Dictionary<string, string>
+                {
+                    {
+                        "as:client_id", (context.ClientId == null) ? string.Empty : context.ClientId
+                    },
+                    {
+                        "userName", context.UserName
+                    },
+                { "as:domainLogin", user.UserName },
+                { "as:userName", user.UserName },
+                { "as:fullName", user.Email },
                 //{ "emailAddress", user.EmailAddress },
                 //{ "departmentDescr", user.DepartmentDescr },
                 //{ "isActive", user.boolIsActive.ToString() },
                 //{ "systemUserId", user.SystemUserID.ToString() },
                 //{ "departmentID", user.DepartmentID.ToString() },
                 //{ "role", user.AppRole }
-            };
-
-            return new AuthenticationProperties(data);
+                });
         }
 
         //http://discoveringdotnet.alexeyev.org/2014/08/simple-explanation-of-bearer-authentication-for-web-api-2.html
+
         public override async Task GrantRefreshToken(OAuthGrantRefreshTokenContext context)
         {
-            //enforce client binding of refresh token
+            /*validate access token and user*/
+
             if (context.Ticket == null || context.Ticket.Identity == null || !context.Ticket.Identity.IsAuthenticated)
             {
-                context.SetError("invalid_grant", "Refresh token is not valid");
+                context.SetError("invalid_grant", "invalid refresh token");
+
+                _logService.LogMessage(new
+                {
+                    type = "grantRefreshToken",
+                    endpoint = context.Request.Uri,
+                    msg = "Ticket or Identity is null or user is not authenticated"
+                });
+
+                return;
             }
-            else
+
+            /*validate cilent*/
+
+            var originalClient = context.Ticket.Properties.Dictionary["as:client_id"];
+            var currentClient = context.ClientId;
+
+            if (originalClient != currentClient)
             {
-                var userIdentity = context.Ticket.Identity;
-                var authenticationTicket = await CreateAuthenticationTicket(context.OwinContext, userIdentity);
+                context.SetError("invalid_clientId", "invalid client");
 
-                //Additional claim is needed to separate access token updating from authentication
-                //requests in RefreshTokenProvider.CreateAsync() method
-                authenticationTicket.Identity.AddClaim(new Claim("refreshToken", "refreshToken"));
+                _logService.LogMessage(new
+                {
+                    type = "grantRefreshToken",
+                    endpoint = context.Request.Uri,
+                    msg = "Refresh token is issued to a different client. The client_id being passed in the request doesn't match the client_id in the access token as:clien_id"
+                });
 
-                context.Validated(authenticationTicket);
+                return;
             }
+
+            /*create new ticket and refresh claims*/
+
+            var newClaimsIdentity = new ClaimsIdentity(context.Ticket.Identity);
+
+
+            var orgUserId = Convert.ToInt32(context.Ticket.Identity.GetUserId());
+            var orgUserRepo = context.OwinContext.Get<RepoBase<OrgUser>>();
+
+            var user = orgUserRepo.Find(orgUserId);
+
+            ClaimsGenerator claimsGenerator = new ClaimsGenerator(
+                user,
+                newClaimsIdentity,
+                context.OwinContext.Get<RepoBase<OrgUser>>(),
+                context.OwinContext.Get<RepoBase<OrgUserRole>>(),
+                context.OwinContext.Get<RepoBase<OrgGlobalUserRole>>(),
+                context.OwinContext.Get<RepoBase<OrgAppUserAuthIp>>(),
+                context.OwinContext.Get<RepoBase<OrgAppUserRole>>(),
+                context.OwinContext.Get<RepoBase<OrgAppUserMetadata>>());
+
+            await claimsGenerator.GenerateClaims();
+
+            var newAuthTicket = new AuthenticationTicket(newClaimsIdentity, context.Ticket.Properties);
+            var currentUtc = new Microsoft.Owin.Infrastructure.SystemClock().UtcNow;
+
+            newAuthTicket.Properties.IssuedUtc = currentUtc;
+            newAuthTicket.Properties.ExpiresUtc = currentUtc.Add(TimeSpan.FromMinutes(Convert.ToInt32(context.OwinContext.Get<string>("as:clientRefreshTokenLifeTime"))));
+            newAuthTicket.Properties.AllowRefresh = true;
+
+            /*validate new ticket*/
+
+            context.Validated(newAuthTicket);
+
+            var principal = new ClaimsPrincipal(new[] { newClaimsIdentity });
+
+            _logService.LogMessage(new
+            {
+                type = "claimsRefreshed",
+                endpoint = context.Request.Uri,
+                userName = newClaimsIdentity.Name,
+            });
+
+            return;
         }
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            ILogServiceAsync<ILogServiceSettings> logService = GlobalConfiguration.Configuration.DependencyResolver.GetService<ILogServiceAsync<ILogServiceSettings>>();
-
             var sqlUserManager = context.OwinContext.GetUserManager<ApplicationUserManager>();
-            var sqlUser = await sqlUserManager.FindAsync(context.UserName, context.Password);
+            var allowedOrigin = context.OwinContext.Get<string>("as:clientAllowedOrigin");
+            var orgId = context.OwinContext.Get<int>("as:orgId");
 
-            if (sqlUser == null || !sqlUser.IsActive)
+            OrgUser sqlUser = null;
+
+            /*validate user*/
+
+            if (context.UserName.Contains(@"\"))
+                sqlUser = await sqlUserManager.FindByOrgIdUsername(orgId, context.UserName);
+            else
+                sqlUser = await sqlUserManager.FindByOrgIdUsernamePassword(orgId, context.UserName, context.Password);
+
+            if (sqlUser == null || !sqlUser.IsActive || sqlUser.IsDeleted)
             {
-                context.SetError("invalid_grant", "The user name or password is incorrect.");
+                context.SetError("invalid_grant", "invalid grant");
 
-                logService.LogMessage(new
+                _logService.LogMessage(new
                 {
                     type = "claimsGenerated",
                     endpoint = context.Request.Uri,
@@ -96,51 +174,43 @@ namespace Web.Api
                 return;
             }
 
+            if (allowedOrigin == null)
+                allowedOrigin = "*";
+
+            context.OwinContext.Set<int>("as:orgUserId", sqlUser.Id);
+            context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { allowedOrigin });
+
+            /*add claims*/
+
             ClaimsIdentity oAuthIdentity = await sqlUser.GenerateUserIdentityAsync(sqlUserManager, OAuthDefaults.AuthenticationType);
-
-            //ClaimsGenerator claimsGenerator = new ClaimsGenerator(
-            //    sqlUser,
-            //    oAuthIdentity,
-            //    context.OwinContext.Get<RepoBase<SystemUser>>());
-
-            //claimsGenerator.GenerateClaims();
-            
-            //claims generator is the same as this:
-
-            oAuthIdentity.AddClaim(new Claim("projectRequestRole", JsonConvert.SerializeObject(new SimpleRoleClaim
-            {
-                UserId = 2154,//_user.SystemUserID,
-                DomainLogin = "domain loginname",//_user.DomainLogin.Trim(),
-                UserName = "someusername",//_user.DomainLogin.Trim(),
-                EmailAddress = "yourmom@gmail.com",//_user.EmailAddress.Trim(),
-                DepartmentDescription = "some dp des",//_user.DepartmentDescr,
-                DepartmentId = 33,//_user.DepartmentID,
-                IsActive = true,//_user.boolIsActive,
-                Role = "user",//_user.AppRole
-            })));
-
             ClaimsIdentity cookiesIdentity = await sqlUser.GenerateUserIdentityAsync(sqlUserManager, CookieAuthenticationDefaults.AuthenticationType);
 
-            AuthenticationProperties properties = CreateProperties(sqlUser);
+            oAuthIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
+            oAuthIdentity.AddClaim(new Claim("orgUserId", sqlUser.Id.ToString()));
+
+            ClaimsGenerator claimsGenerator = new ClaimsGenerator(
+                sqlUser,
+                oAuthIdentity,
+                context.OwinContext.Get<RepoBase<OrgUser>>(),
+                context.OwinContext.Get<RepoBase<OrgUserRole>>(),
+                context.OwinContext.Get<RepoBase<OrgGlobalUserRole>>(),
+                context.OwinContext.Get<RepoBase<OrgAppUserAuthIp>>(),
+                context.OwinContext.Get<RepoBase<OrgAppUserRole>>(),
+                context.OwinContext.Get<RepoBase<OrgAppUserMetadata>>());
+
+            await claimsGenerator.GenerateClaims();
+
+            /*create ticket*/
+
+            AuthenticationProperties properties = CreateProperties(sqlUser, context);
             AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
             ticket.Properties.AllowRefresh = true;
-            context.Validated(ticket);
             context.Request.Context.Authentication.SignIn(cookiesIdentity);
-
-            //TODO: Document this
-            /*http://stackoverflow.com/questions/21971190/asp-net-web-api-2-owin-authentication-unsuported-grant-type/21979279#21979279
-             *********************************
-             * it wasn't enough adding config.EnableCors(new EnableCorsAttribute("*", "*", "*")); to WebApiConfig.cs
-             * or the controllers. example:
-             *     [EnableCors(origins: "*", headers: "*", methods: "*")]
-             *     public class ValuesController : ApiController
-             */
+            context.Validated(ticket);
 
             var principal = new ClaimsPrincipal(new[] { oAuthIdentity });
 
-            context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
-
-            logService.LogMessage(new
+            _logService.LogMessage(new
             {
                 type = "claimsGenerated",
                 endpoint = context.Request.Uri,
@@ -162,16 +232,89 @@ namespace Web.Api
             return Task.FromResult<object>(null);
         }
 
-        public override Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
+        public override async Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
-            // Resource owner password credentials does not provide a client ID.
-            if (context.ClientId == null)
+            string clientId = string.Empty;
+            string clientSecret = string.Empty;
+
+            if (!context.TryGetBasicCredentials(out clientId, out clientSecret))
             {
-                context.Validated();
+                context.TryGetFormCredentials(out clientId, out clientSecret);
             }
 
-            return Task.FromResult<object>(null);
+            /*validate client*/
 
+            if (context.Parameters["org_id"] == null)
+            {
+                context.SetError("invalid_client", "invalid client");
+                _logService.LogMessage(new
+                {
+                    type = "claimsGenerated",
+                    endpoint = context.Request.Uri,
+                    data = new
+                    {
+                        message = "invalid_grant The user name or password is incorrect",
+                    }
+                });
+
+                return;
+            }
+
+            var orgRepo = (OrgRepo) context.OwinContext.Get<RepoBase<Org>>();
+            var clientRepo = (OrgClientRepo) context.OwinContext.Get<RepoBase<OrgClient>>();
+            var org = await orgRepo.FindAsync(Convert.ToInt32(context.Parameters["org_id"]));
+
+            if(org == null || !org.IsActive )
+            {
+                context.SetError("invalid_client", "invalid client");
+                return;
+            }
+
+            if (context.ClientId == null)
+            {
+                //Remove the comments from the below line context.SetError, and invalidate context 
+                //if you want to force sending clientId/secrects once obtain access tokens. 
+                context.Validated();
+                //context.SetError("invalid_clientId", "ClientId should be sent.");
+                return;
+            }
+
+            var client = await clientRepo.FindByOrgAndClientName(org.Id, context.ClientId);
+
+            if (client == null || !client.IsActive || client.IsDeleted)
+            {
+                context.SetError("invalid_client", "invalid client");
+                return;
+            }
+
+            if (client.OrgClientType.Id == 1 )//Models.ApplicationTypes.NativeConfidential)
+            {
+                if (string.IsNullOrWhiteSpace(clientSecret))
+                {
+                    context.SetError("invalid_client", "invalid client");
+                    return;
+                }
+                else
+                {
+                    if (client.Secret != clientSecret) //Helper.GetHash(clientSecret))
+                    {
+                        context.SetError("invalid_client", "invalid client");
+                        return;
+                    }
+                }
+            }
+
+            /*add props to owincontext*/
+
+            context.OwinContext.Set<string>("as:clientAllowedOrigin", client.AllowedOrigin);
+            context.OwinContext.Set<string>("as:clientRefreshTokenLifeTime", client.RefreshTokenLifeTime.ToString());
+            context.OwinContext.Set<int>("as:orgId", client.OrgId);
+            context.OwinContext.Set<string>("as:orgName", client.Org.OrgName);
+            context.OwinContext.Set<int>("as:clientType", client.ClientTypeId);
+
+            /*validate request*/
+
+            context.Validated();
         }
 
         public override Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)
@@ -188,61 +331,5 @@ namespace Web.Api
 
             return Task.FromResult<object>(null);
         }
-
-        private async Task<AuthenticationTicket> CreateAuthenticationTicket(IOwinContext owinContext, ClaimsIdentity oAuthIdentity)
-        {
-            ILogServiceAsync<ILogServiceSettings> logService = GlobalConfiguration.Configuration.DependencyResolver.GetService<ILogServiceAsync<ILogServiceSettings>>();
-
-            var sqlUserManager = owinContext.GetUserManager<ApplicationUserManager>();
-            var sqlUser = await sqlUserManager.FindByNameAsync(oAuthIdentity.Name);
-
-            //http://www.c-sharpcorner.com/UploadFile/ff2f08/angularjs-enable-owin-refresh-tokens-using-asp-net-web-api/
-            var newIdentity = new ClaimsIdentity(oAuthIdentity);
-
-            //SqlServerClaimsGenerator claimsGenerator = new SqlServerClaimsGenerator(
-            //    sqlUser,
-            //    oAuthIdentity,
-            //    owinContext.Get<RepoBase<SystemUser>>());
-
-            //claimsGenerator.GenerateClaims();
-
-            oAuthIdentity.AddClaim(new Claim("projectRequestRole", JsonConvert.SerializeObject(new SimpleRoleClaim
-            {
-                UserId = 2154,//_user.SystemUserID,
-                DomainLogin = "domain loginname",//_user.DomainLogin.Trim(),
-                UserName = "someusername",//_user.DomainLogin.Trim(),
-                EmailAddress = "yourmom@gmail.com",//_user.EmailAddress.Trim(),
-                DepartmentDescription = "some dp des",//_user.DepartmentDescr,
-                DepartmentId = 33,//_user.DepartmentID,
-                IsActive = true,//_user.boolIsActive,
-                Role = "user",//_user.AppRole
-            })));
-
-            var currentUtc = new Microsoft.Owin.Infrastructure.SystemClock().UtcNow;
-
-            AuthenticationProperties properties = CreateProperties(sqlUser);
-            AuthenticationTicket ticket = new AuthenticationTicket(newIdentity, properties);
-            ticket.Properties.IssuedUtc = DateTime.UtcNow;
-            ticket.Properties.ExpiresUtc = currentUtc.Add(TimeSpan.FromDays(365));//TODO: configure token expiration time in web config
-            ticket.Properties.AllowRefresh = true;
-
-            var principal = new ClaimsPrincipal(new[] { oAuthIdentity });
-
-            owinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
-
-            logService.LogMessage(new
-            {
-                type = "claimsRefreshed",
-                endpoint = owinContext.Request.Uri,
-                userName = oAuthIdentity.Name,
-                data = new
-                {
-                    orgUsers = principal.GetClaim<SimpleRoleClaim>("projectRequestRole"),
-                }
-            });
-
-            return ticket;
-        }
-
     }
 }

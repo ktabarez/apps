@@ -13,14 +13,14 @@ namespace Web.Website.Controllers
             return View();
         }
 
-        public ActionResult About()
+        public ActionResult Stats()
         {
             ViewBag.Message = "Your application description page.";
 
             return View();
         }
 
-        public ActionResult Contact()
+        public ActionResult Settings()
         {
             ViewBag.Message = "Your contact page.";
 

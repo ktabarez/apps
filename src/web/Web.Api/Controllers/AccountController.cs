@@ -119,9 +119,29 @@ namespace Web.Api
                 return BadRequest(ModelState);
             }
 
-            var user = new User() { UserName = model.Email, Email = model.Email };
+            if (model.Username == null || model.Username.Trim().Equals(string.Empty) || 
+                (model.Password != null && !model.Password.Trim().Equals(string.Empty) && model.Username.Contains(@"\")))
+                return GetErrorResult(IdentityResult.Failed("invalid username"));
 
-            IdentityResult result = await UserManager.CreateAsync(user, model.Password);
+            OrgUser user = user = new OrgUser()
+            {
+                UserName = model.Username,
+                Email = model.Email,
+                IsActive = true,
+                created_by = "web.api",
+                created_dt = DateTime.UtcNow,
+                modified_by = "web.api",
+                modified_dt = DateTime.UtcNow,
+                OrgId = model.OrgId,
+            };
+
+            IdentityResult result = null;
+
+            if (model.Username.Contains(@"\"))
+                result = await UserManager.CreateAsync(user);
+            else
+                result = await UserManager.CreateAsync(user, model.Password);
+                
 
             if (!result.Succeeded)
             {

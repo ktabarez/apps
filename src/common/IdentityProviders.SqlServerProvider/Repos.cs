@@ -6,37 +6,11 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace IdentityProviders.SqlServerProvider
 {
-    public class MockAppFrameowrkDbContext : IDbConnectionFactory
-    {
-        private static DbConnection _connection;
-        private readonly static object _lock = new object();
-
-        public static void ResetDb()
-        {
-            lock (_lock)
-            {
-                _connection = null;
-            }
-        }
-
-        public DbConnection CreateConnection(string nameOrConnectionString)
-        {
-            lock (_lock)
-            {
-                if (_connection == null)
-                {
-                    //_connection = Effort.DbConnectionFactory.CreateTransient();
-                }
-
-                return _connection;
-            }
-        }
-    }
-
-    public class SystemUserRepo : RepoBase<User>
+    public class SystemUserRepo : RepoBase<OrgUser>
     {
         public SystemUserRepo(DbContext context)
             : base(context)
@@ -44,24 +18,24 @@ namespace IdentityProviders.SqlServerProvider
 
         }
 
-        public Task<User> GetByUserNameAsync(string userName)
+        public Task<OrgUser> GetByUserNameAsync(string userName)
         {
             
             return Entities.FirstOrDefaultAsync(i => i.UserName.Equals(userName));
         }
 
-        public new async Task CreateAsync(User entity)
+        public new async Task CreateAsync(OrgUser entity)
         {
             await base.CreateAsync(entity);
         }
 
-        public Task<User> GetByEmailAsync(string email)
+        public Task<OrgUser> GetByEmailAsync(string email)
         {
             
             return Entities.FirstOrDefaultAsync(i => i.Email.Equals(email));
         }
 
-        public Task<List<User>> GetSearchResults(string searchTerm, int page = 0, int limit = 0)
+        public Task<List<OrgUser>> GetSearchResults(string searchTerm, int page = 0, int limit = 0)
         {
             
 
@@ -71,7 +45,7 @@ namespace IdentityProviders.SqlServerProvider
                            .OrderBy(i => i.Id)
                            .Skip(limit * page)
                            .Take(limit)
-                           .ToListAsync<User>();
+                           .ToListAsync<OrgUser>();
             //Take(pages * limit).ToList();
         }
 
@@ -97,7 +71,7 @@ namespace IdentityProviders.SqlServerProvider
 
         public Task<List<OrgUser>> GetByUserNameAsync(string userName)
         {
-            return Entities.Where(i => i.User.UserName.Equals(userName)).ToListAsync();
+            return Entities.Where(i => i.UserName.Equals(userName)).ToListAsync();
         }
 
         public Task<List<OrgUser>> GetAsync(string orgName, int page = 0, int limit = 0)
@@ -119,12 +93,22 @@ namespace IdentityProviders.SqlServerProvider
         {
             
             return Entities.FirstOrDefaultAsync(i => i.Org.OrgName.Equals(organization) &&
-                                         i.Org.OrgUsers.Any(x => i.User.UserName.Equals(username)));
+                                                     i.Org.OrgUsers.Any(x => i.UserName.Equals(username)));
         }
 
         internal Task<List<OrgUser>> GetAsync(int userId)
         {
-            return Entities.Where(i => i.UserId == userId).ToListAsync();
+            return Entities.Where(i => i.Id == userId).ToListAsync();
+        }
+
+        public async Task<OrgUser> FindByOrgIdUserName(int orgId, string username)
+        {
+            return await Entities.FirstOrDefaultAsync(i => i.OrgId == orgId && i.UserName.Equals(username));
+        }
+
+        public async Task<OrgUser> FindByOrgIdUsernamePassword(int orgId, string username, string passwordHash)
+        {
+            return await Entities.FirstOrDefaultAsync(i => i.OrgId == orgId && i.UserName.Equals(username) && i.PasswordHash.Equals(passwordHash));
         }
     }
 
@@ -140,7 +124,7 @@ namespace IdentityProviders.SqlServerProvider
         public Task<List<OrgUserRole>> GetAsync(int userId)
         {
             
-            return Entities.Where(i => i.OrgUser.UserId == userId).ToListAsync();
+            return Entities.Where(i => i.OrgUser.Id == userId).ToListAsync();
         }
 
         public Task<OrgUserRole> GetAsync(int orgRoleId, int orgUserId)
@@ -175,7 +159,7 @@ namespace IdentityProviders.SqlServerProvider
             
             return Entities.FirstOrDefaultAsync(i => i.OrgApp.AppName.Equals(application) &&
                                 i.OrgApp.Org.OrgName.Equals(organization) &&
-                                i.User.UserName.Equals(username));
+                                i.OrgUser.UserName.Equals(username));
         }
     }
 
@@ -256,7 +240,7 @@ namespace IdentityProviders.SqlServerProvider
             
             return Entities.Where(i => i.OrgAppUser.OrgApp.AppName.Equals(appname) &&
                                        i.OrgAppUser.OrgApp.Org.OrgName.Equals(organization) &&
-                                       i.OrgAppUser.User.UserName.Equals(username))
+                                       i.OrgAppUser.OrgUser.UserName.Equals(username))
                            .ToListAsync();
         }
 
@@ -265,13 +249,13 @@ namespace IdentityProviders.SqlServerProvider
             
             return Entities.FirstOrDefaultAsync(i => i.OrgAppUser.OrgApp.AppName.Equals(appname) &&
                                        i.OrgAppUser.OrgApp.Org.OrgName.Equals(organization) &&
-                                       i.OrgAppUser.User.UserName.Equals(username) &&
+                                       i.OrgAppUser.OrgUser.UserName.Equals(username) &&
                                        i.Ip.Equals(ipaddress));
         }
 
         public async Task<bool> AnyMoreSearchItems(string org, string username, string searchTerm, int page = 0, int limit = 0)
         {
-            var totalItems = await Entities.Where(i => i.OrgAppUser.User.UserName.ToLower().Equals(username.ToLower()) &&
+            var totalItems = await Entities.Where(i => i.OrgAppUser.OrgUser.UserName.ToLower().Equals(username.ToLower()) &&
                                                        i.OrgAppUser.OrgApp.Org.OrgName.ToLower().Equals(org.ToLower()))
                                            .Select(i => new
                                            {
@@ -293,7 +277,7 @@ namespace IdentityProviders.SqlServerProvider
 
             var skipTotal = limit * (page - 1);
 
-            return await Entities.Where(i => i.OrgAppUser.User.UserName.ToLower().Equals(username.ToLower()) &&
+            return await Entities.Where(i => i.OrgAppUser.OrgUser.UserName.ToLower().Equals(username.ToLower()) &&
                                                        i.OrgAppUser.OrgApp.Org.OrgName.ToLower().Equals(org.ToLower()))
                                            .Select(i => new
                                            {
@@ -389,7 +373,7 @@ namespace IdentityProviders.SqlServerProvider
         public Task<List<OrgAppUserRole>> GetAsync(int userId)
         {
             
-            return Entities.Where(oaur => oaur.OrgAppUser.User.Id == userId).ToListAsync();
+            return Entities.Where(oaur => oaur.OrgAppUser.OrgUser.Id == userId).ToListAsync();
         }
 
         public Task<List<OrgAppUserRole>> GetAsync(string organization)
@@ -403,7 +387,7 @@ namespace IdentityProviders.SqlServerProvider
             
             return Entities.Where(i => i.OrgAppUser.OrgApp.AppName.Equals(appname) &&
                                                 i.OrgAppUser.OrgApp.Org.OrgName.Equals(organization) &&
-                                                i.OrgAppUser.User.UserName.Equals(username)).ToListAsync();
+                                                i.OrgAppUser.OrgUser.UserName.Equals(username)).ToListAsync();
         }
 
         public Task<OrgAppUserRole> GetAsync(string orgname, string appname, string username, string rolename)
@@ -411,7 +395,7 @@ namespace IdentityProviders.SqlServerProvider
             
             return Entities.FirstOrDefaultAsync(i => i.OrgAppUser.OrgApp.Org.OrgName.Equals(orgname) &&
                                 i.OrgAppUser.OrgApp.AppName.Equals(appname) &&
-                                i.OrgAppUser.User.UserName.Equals(username) &&
+                                i.OrgAppUser.OrgUser.UserName.Equals(username) &&
                                 i.OrgAppRole.Name.Equals(rolename));
         }
     }
@@ -477,7 +461,7 @@ namespace IdentityProviders.SqlServerProvider
         public Task<List<OrgGlobalUserRole>> GetAsync(int userId)
         {
             
-            return Entities.Where(gur => gur.OrgUser.UserId == userId).ToListAsync();
+            return Entities.Where(gur => gur.OrgUser.Id == userId).ToListAsync();
         }
 
         public Task<List<OrgGlobalUserRole>> GetAsync(string organization)
@@ -489,7 +473,7 @@ namespace IdentityProviders.SqlServerProvider
         public Task<OrgGlobalUserRole> GetAsync(string orgname, string username)
         {
             
-            return Entities.FirstOrDefaultAsync(i => i.OrgUser.User.UserName.Equals(username) &&
+            return Entities.FirstOrDefaultAsync(i => i.OrgUser.UserName.Equals(username) &&
                                          i.OrgUser.Org.OrgName.Equals(orgname));
         }
 
@@ -497,7 +481,7 @@ namespace IdentityProviders.SqlServerProvider
         {
             return Entities.FirstOrDefaultAsync(i => i.OrgUser.Org.OrgName.Equals(orgname) &&
                                        i.OrgGlobalRole.Name.Equals(globalrole) &&
-                                       i.OrgUser.User.UserName.Equals(username));
+                                       i.OrgUser.UserName.Equals(username));
         }
     }
 
@@ -506,10 +490,9 @@ namespace IdentityProviders.SqlServerProvider
         public OrgRepo(DbContext context)
             : base(context) { }
 
-        public Task<Org> GetByNameAsync(string organization)
+        public async Task<Org> FindByNameAsync(string organization)
         {
-            
-            return Entities.FirstOrDefaultAsync(i => i.OrgName.Equals(organization));
+            return await Entities.FirstOrDefaultAsync(i => i.OrgName.Equals(organization));
         }
     }
 
@@ -563,6 +546,38 @@ namespace IdentityProviders.SqlServerProvider
         public Task<List<OrgAppUserMetadata>> FindAsync(int userId)
         {
             return Entities.Where(i => i.OrgAppUser.UserId == userId).ToListAsync();
+        }
+    }
+
+    public class ClientTypeRepo : RepoBase<OrgClientType>
+    {
+        public ClientTypeRepo(DbContext context)
+            : base(context)
+        {
+
+        }
+    }
+
+    public class OrgClientRepo : RepoBase<OrgClient>
+    {
+        public OrgClientRepo(DbContext context)
+            : base(context)
+        {
+
+        }
+
+        public async Task<OrgClient> FindByOrgAndClientName(int orgId, string clientId)
+        {
+            return await Entities.FirstOrDefaultAsync(i => i.OrgId == orgId && i.Id.Equals(clientId));
+        }
+    }
+
+    public class RefreshTokenRepo : RepoBase<OrgUserRefreshToken>
+    {
+        public RefreshTokenRepo(DbContext context)
+            :base(context)
+        {
+
         }
     }
 }

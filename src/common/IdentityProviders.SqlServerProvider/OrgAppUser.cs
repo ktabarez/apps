@@ -33,7 +33,7 @@ namespace IdentityProviders.SqlServerProvider
         public System.DateTime modified_dt { get; set; }
     
         public virtual OrgApp OrgApp { get; set; }
-        public virtual User User { get; set; }
+        public virtual OrgUser OrgUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrgAppUserAuthIp> OrgAppUserAuthIps { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

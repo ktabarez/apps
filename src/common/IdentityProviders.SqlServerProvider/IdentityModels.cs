@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace IdentityProviders.SqlServerProvider
 {
-    public partial class User : IUser<int>, IDisposable
+    public partial class OrgUser : IUser<int>, IDisposable
     {
         public virtual void EnableTwoFactorAuthentication()
         {
@@ -104,7 +104,7 @@ namespace IdentityProviders.SqlServerProvider
             //_logins.Remove(ravenUserLogin);
         }
 
-        public virtual async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<User, int> manager, string authenticationType)
+        public virtual async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<OrgUser, int> manager, string authenticationType)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
             var userIdentity = await manager.CreateIdentityAsync(this, authenticationType);

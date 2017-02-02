@@ -21,7 +21,6 @@ using Common.ApiClaims;
 
 namespace Common.ApiFilters
 {
-    
     public class SimpleRoleAuthorizeFilter : AuthorizationFilterAttribute
     {
         public List<string> Roles { get; set; }
@@ -93,10 +92,24 @@ namespace Common.ApiFilters
 
             var claimsPrincipal = actionContext.RequestContext.Principal as ClaimsPrincipal;
 
-            if (claimsPrincipal.Identity.IsAuthenticated && (IsInGlobalRole(claimsPrincipal) || IsInOrgRole(claimsPrincipal) || IsInAppRole(claimsPrincipal)))
+            if (claimsPrincipal.Identity.IsAuthenticated && IsInOrg(actionContext, claimsPrincipal) && (IsInGlobalRole(claimsPrincipal) || IsInOrgRole(claimsPrincipal) || IsInAppRole(claimsPrincipal)))
                 return;
 
             actionContext.Response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
+        }
+
+        private bool IsInOrg(HttpActionContext actionContext, ClaimsPrincipal claimsPrincipal)
+        {
+            List<OrgUserClaim> orgAppRoles = claimsPrincipal.GetClaims<OrgUserClaim>("orgUsers");
+
+            var orgName = orgAppRoles.Select(i => i.OrgnName).FirstOrDefault();
+
+            if (orgName != null && actionContext.Request.RequestUri.Segments != null
+                && actionContext.Request.RequestUri.Segments.Length >= 4
+                && actionContext.Request.RequestUri.Segments[3].Replace("/", String.Empty).ToLower().Equals(orgName))
+                return true; 
+
+            return false;
         }
 
         private bool IsInAppRole(ClaimsPrincipal claimsPrincipal)

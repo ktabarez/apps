@@ -19,6 +19,13 @@ BEGIN
     EXEC( 'CREATE SCHEMA Logging' );
 END
 
+
+if object_id('Auth.[ClientType]', 'U') is not null
+	drop table [auth].[ClientType]
+if object_id('Auth.[Client]', 'U') is not null
+	drop table [auth].[Client]
+if object_id('Auth.[RefreshToken]', 'U') is not null
+	drop table [auth].[RefreshToken]
 if object_id('Auth.[OrgAppUserMetadata]', 'U') is not null
 	drop table OrgAppUserMetadata
 if object_id('Auth.[UserRefreshToken]', 'U') is not null
@@ -50,6 +57,65 @@ if object_id('Auth.User', 'U') is not null
 if object_id('Auth.[Logs]', 'U') is not null
 	drop table logs
 
+create table [auth].[ClientType]
+(
+	Id int not null identity(1,1)
+	,Name varchar(250) not null unique
+
+	,IsActive bit not null
+	,IsDeleted bit not null
+	,created_by varchar(50) not null
+	,created_dt datetime not null
+	,modified_by varchar(50) not null
+	,modified_dt datetime not null
+
+	constraint pk_ClientType_Id primary key (Id asc)
+)
+
+create table [auth].[Client]
+(
+	Id varchar(250) not null
+	,Secret varchar(max) null
+	,Name varchar(250) not null unique
+	,ClientTypeId int not null
+		constraint fk_Client_ClientType_Id references [auth].[ClientType](Id)
+	,RefreshTokenLifeTime int not null
+	,AllowedOrigin varchar(100) not null
+
+	,IsActive bit not null
+	,IsDeleted bit not null
+	,created_by varchar(50) not null
+	,created_dt datetime not null
+	,modified_by varchar(50) not null
+	,modified_dt datetime not null
+
+	constraint pk_Client_Id primary key (Id asc)
+)
+
+
+insert into auth.clienttype
+select 'Native - Confidential',	1,	0,	'someone',	'2017-01-13 23:55:30.990',	'someone',	'2017-01-13 23:55:30.990'
+
+insert into auth.clienttype
+select 'JavaScript - Nonconfidential',	1,	0,	'someone',	'2017-01-13 23:55:30.990',	'someone',	'2017-01-13 23:55:30.990'
+
+insert into auth.clienttype
+select 'Domain user',	1,	0,	'someone',	'2017-01-13 23:55:30.990',	'someone',	'2017-01-13 23:55:30.990'
+
+insert into auth.clienttype
+select 'Non-Domain user',	1,	0,	'someone',	'2017-01-13 23:55:30.990',	'someone',	'2017-01-13 23:55:30.990'
+
+create table auth.RefreshToken
+(
+	Id varchar(250) not null
+	,Subject varchar(250) not null
+	,ClientId varchar(250) not null
+	,IssuedUtc datetime not null
+	,ExpiresUtc datetime not null
+	,ProtectedTicket varchar(max) not null
+
+	constraint pk_RefreshToken_Id primary key (Id asc)
+)
 
 create table [auth].[User]
 (

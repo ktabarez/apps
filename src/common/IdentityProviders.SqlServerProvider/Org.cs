@@ -18,6 +18,8 @@ namespace IdentityProviders.SqlServerProvider
         public Org()
         {
             this.OrgApps = new HashSet<OrgApp>();
+            this.OrgClients = new HashSet<OrgClient>();
+            this.OrgClientTypes = new HashSet<OrgClientType>();
             this.OrgGlobalRoles = new HashSet<OrgGlobalRole>();
             this.OrgRoles = new HashSet<OrgRole>();
             this.OrgUsers = new HashSet<OrgUser>();
@@ -34,6 +36,10 @@ namespace IdentityProviders.SqlServerProvider
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrgApp> OrgApps { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OrgClient> OrgClients { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OrgClientType> OrgClientTypes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrgGlobalRole> OrgGlobalRoles { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

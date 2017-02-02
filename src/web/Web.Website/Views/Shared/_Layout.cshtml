@@ -1,15 +1,535 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
+    <title>Project Requests</title>
     @RenderSection("title", required: false)
+
+    <meta charset="utf-8" />
+    <meta name="description" content="my projects" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     @RenderSection("meta", required: false)
+
+    <!--Basic Styles-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.css" type="text/css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" type="text/css" rel="stylesheet" />
+
+    <!--Fonts-->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300" rel="stylesheet" type="text/css" />
+
+    <!--site styles-->
+    <link href="~/assets/css/site.css" rel="stylesheet" type="text/css" rel="stylesheet" />
+
+    <!--Page Related styles-->
+    <link href="~/assets/css/dataTables.bootstrap.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2-rc.1/css/select2.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-css/1.4.6/select2-bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.1/summernote.css" />
+    <link rel="stylesheet" href="https://cdn.rawgit.com/esvit/ng-table/1.0.0/dist/ng-table.min.css">
     @RenderSection("links", required: false)
     @RenderSection("headScripts", required: false)
     @RenderSection("styleSheets", required: false)
+
+    <style>
+        /*.navbar {
+                height: 60px;
+                min-height: 60px;
+            }
+
+                .navbar .navbar-inner {
+                    min-height: 60px;
+                    background: -webkit-linear-gradient(rgb(98, 159, 206), rgba(234, 243, 251, 0));
+                    background: -o-linear-gradient(rgb(98, 159, 206), rgba(234, 243, 251, 0));
+                    background: -moz-linear-gradient(rgb(98, 159, 206), rgba(234, 243, 251, 0));
+                    background: linear-gradient(rgb(98, 159, 206), rgba(234, 243, 251, 0));
+                    background: red;
+                    background: -webkit-linear-gradient(rgb(98, 159, 206), rgba(234, 243, 251, 0));
+                    background: -o-linear-gradient(rgb(98, 159, 206), rgba(234, 243, 251, 0));
+                    background: -moz-linear-gradient(rgb(98, 159, 206), rgba(234, 243, 251, 0));
+                    background: linear-gradient(rgb(98, 159, 206), rgba(234, 243, 251, 0));
+                }
+
+                .navbar .navbar-header {
+                    padding: 4px;
+                }
+
+
+
+            .page-sidebar.menu-compact + ng-view .page-content {
+                margin-left: 43px;
+            }
+
+            .page-sidebar.hide + ng-view .page-content {
+                margin-left: 0 !important;
+            }*/
+
+        .navbar .navbar-header small {
+            background: url("../../assets/img/mfcu-bell.png") no-repeat;
+            border-style: none;
+            width: 58px !important;
+            height: 55px !important;
+            display: block;
+            margin: 0 auto;
+            padding: 0px 0px 0px 0px;
+            float: left;
+        }
+
+        .loading-container {
+            background: #65A2CE;
+        }
+
+        .bg-mfcu {
+            /*padding: 8px;*/
+            background: #65A2CE url("http://appdev1/itgov/Content/themes/redmond/images/ui-bg_gloss-wave_55_5c9ccc_500x100.png") 50% 50% repeat-x;
+        }
+
+        @@media only screen and (max-width: 880px) {
+            /*hide the menu*/
+            /*.page-sidebar.hide {
+                    display: none !important;
+                }*/
+
+            .page-sidebar {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: 224px;
+                display: block;
+            }
+
+                .page-sidebar.menu-compact:before {
+                    width: 42px;
+                }
+
+                .page-sidebar:before {
+                    content: "";
+                    position: fixed;
+                    display: block;
+                    width: 219px;
+                    bottom: 0;
+                    top: 0;
+                    left: 5px;
+                    background-color: #fff;
+                    -webkit-box-shadow: 0 0 10px 0 rgba(0,0,0,.2);
+                    -moz-box-shadow: 0 0 10px 0 rgba(0,0,0,.2);
+                    box-shadow: 0 0 10px 0 rgba(0,0,0,.2);
+                    z-index: 1;
+                }
+        }
+
+        .account-area {
+            /*width: 50px;*/
+            /*position: absolute;*/
+            right: 0;
+            top: 0;
+        }
+
+        .navbar .navbar-inner .navbar-header .navbar-account .account-area > li {
+            float: left;
+            position: relative;
+            height: 45px;
+            padding-right: 10px;
+            padding-top: 5px;
+        }
+
+            .navbar .navbar-inner .navbar-header .navbar-account .account-area > li > a {
+                position: relative;
+                min-width: 50px;
+                height: auto;
+                display: inline-block;
+            }
+
+            .navbar .navbar-inner .navbar-header .navbar-account .account-area > li .dropdown-arrow:before {
+                right: 9px;
+                background-color: #5db2ff;
+                width: 37px;
+            }
+
+            .navbar .navbar-inner .navbar-header .navbar-account .account-area > li.open > a {
+                background-color: #D9E2EA;
+            }
+
+            .navbar .navbar-inner .navbar-header .navbar-account .account-area > li > a.btn {
+                min-width: 0;
+            }
+
+            .navbar .navbar-inner .navbar-header .navbar-account .account-area > li .dropdown-menu > li.dropdown-footer {
+                padding: 10px;
+                border-top: 3px solid #2dc3e8;
+                border-bottom: 0;
+                text-align: right;
+            }
+
+        @@media print {
+            body {
+                background-color: #FFFFFF;
+                background-image: none;
+                color: #000000;
+            }
+
+            .navbar {
+                display: none !important;
+            }
+
+            .page-body {
+                width: 100%;
+            }
+        }
+
+        @@page {
+            margin: 0;
+            padding: 0;
+        }
+
+        .affix {
+            width: 100%;
+        }
+
+        /*quick buttons*/
+
+        .quick-button {
+            border: 1px solid #ddd;
+            margin-bottom: -1px;
+            padding: 15px 0 5px 0;
+            font-size: 14px;
+            background: #efefef;
+            background: -webkit-gradient(linear,left top,left bottom,from(#fafafa),to(#efefef));
+            background: -webkit-linear-gradient(top,#fafafa,#efefef);
+            background: -moz-linear-gradient(top,#fafafa,#efefef);
+            background: -o-linear-gradient(top,#fafafa,#efefef);
+            background: -ms-linear-gradient(top,#fafafa,#efefef);
+            background: linear-gradient(top,#fafafa,#efefef);
+            -webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.8);
+            -moz-box-shadow: 0 1px 0 rgba(255,255,255,0.8);
+            box-shadow: 0 1px 0 rgba(255,255,255,0.8);
+            -webkit-border-radius: 2px;
+            -moz-border-radius: 2px;
+            border-radius: 2px;
+            display: block;
+            color: #646464;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            -webkit-transition: all .3s ease;
+            -moz-transition: all .3s ease;
+            -ms-transition: all .3s ease;
+            -o-transition: all .3s ease;
+            transition: all .3s ease;
+        }
+
+            .quick-button:hover {
+                text-decoration: none;
+                border-color: #a5a5a5;
+                color: #444;
+                text-shadow: 0 1px 0 #fff;
+                -webkit-box-shadow: 0 0 3px rgba(0,0,0,0.25);
+                -moz-box-shadow: 0 0 3px rgba(0,0,0,0.25);
+                box-shadow: 0 0 3px rgba(0,0,0,0.25);
+            }
+
+            .quick-button i {
+                font-size: 32px;
+            }
+
+            .quick-button:hover .notification {
+                -webkit-transition: all .3s ease;
+                -moz-transition: all .3s ease;
+                -ms-transition: all .3s ease;
+                -o-transition: all .3s ease;
+                transition: all .3s ease;
+                -webkit-box-shadow: 0 0 3px rgba(0,0,0,0.6);
+                -moz-box-shadow: 0 0 3px rgba(0,0,0,0.6);
+                box-shadow: 0 0 3px rgba(0,0,0,0.6);
+            }
+
+        .notification {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            line-height: 16px;
+            height: 30px;
+            padding: 6px 10px;
+            color: white !important;
+            text-shadow: 0 1px rgba(0, 0, 0, 0.25);
+            border-width: 1px;
+            border-style: solid;
+            border-radius: 10px;
+            -webkit-border-radius: 50em;
+            -moz-border-radius: 50em;
+            border-radius: 50em;
+            -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08), inset 0 1px rgba(255, 255, 255, 0.3);
+            -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08), inset 0 1px rgba(255, 255, 255, 0.3);
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08), inset 0 1px rgba(255, 255, 255, 0.3);
+        }
+
+        .notification {
+            border-color: #2fabe9;
+            background-color: #67c2ef;
+            background: #67c2ef;
+            background: -webkit-gradient(linear, left top, left bottom, from(#acddf6), to(#67c2ef));
+            background: -webkit-linear-gradient(top, #acddf6, #67c2ef);
+            background: -moz-linear-gradient(top, #acddf6, #67c2ef);
+            background: -o-linear-gradient(top, #acddf6, #67c2ef);
+            background: -ms-linear-gradient(top, #acddf6, #67c2ef);
+            background: linear-gradient(top, #acddf6, #67c2ef);
+        }
+
+            .notification.green {
+                border-color: #5aad34;
+                background-color: #78cd51;
+                background: #78cd51;
+                background: -webkit-gradient(linear, left top, left bottom, from(#a6dd8d), to(#78cd51));
+                background: -webkit-linear-gradient(top, #a6dd8d, #78cd51);
+                background: -moz-linear-gradient(top, #a6dd8d, #78cd51);
+                background: -o-linear-gradient(top, #a6dd8d, #78cd51);
+                background: -ms-linear-gradient(top, #a6dd8d, #78cd51);
+                background: linear-gradient(top, #a6dd8d, #78cd51);
+            }
+
+            .notification.yellow {
+                border-color: #f4a506;
+                background-color: #fabb3d;
+                background: #fabb3d;
+                background: -webkit-gradient(linear, left top, left bottom, from(#fcd588), to(#fabb3d));
+                background: -webkit-linear-gradient(top, #fcd588, #fabb3d);
+                background: -moz-linear-gradient(top, #fcd588, #fabb3d);
+                background: -o-linear-gradient(top, #fcd588, #fabb3d);
+                background: -ms-linear-gradient(top, #fcd588, #fabb3d);
+                background: linear-gradient(top, #fcd588, #fabb3d);
+            }
+
+            .notification.red {
+                border-color: #fa5833;
+                background-color: #fa603d;
+                background: #fa603d;
+                background: -webkit-gradient(linear, left top, left bottom, from(#fc9d88), to(#fa603d));
+                background: -webkit-linear-gradient(top, #fc9d88, #fa603d);
+                background: -moz-linear-gradient(top, #fc9d88, #fa603d);
+                background: -o-linear-gradient(top, #fc9d88, #fa603d);
+                background: -ms-linear-gradient(top, #fc9d88, #fa603d);
+                background: linear-gradient(top, #fc9d88, #fa603d);
+            }
+
+
+
+        /*new request*/
+        textarea {
+            width: 100%;
+            min-height: 100px;
+        }
+
+        .bordered-darkwhite {
+            background: #F2F2F2;
+        }
+
+        .bordered-bottom-dash {
+            border-bottom: 1px dashed rgba(0,0,0,.2) !important;
+        }
+
+        .widget.flat.with-jumbo-buttons .widget-header h1.widget-caption {
+            font-size: 32px;
+        }
+
+        .widget.flat.with-jumbo-buttons .widget-header.bordered-bottom-dash {
+            padding-bottom: 5px;
+        }
+
+        .widget.flat.with-jumbo-buttons .widget-buttons > [data-toggle="edit"] {
+            color: #777;
+            font-size: 14px;
+        }
+
+        .widget.flat.with-jumbo-buttons .widget-buttons {
+            display: inherit;
+        }
+
+        .widget.flat.with-jumbo-buttons {
+            margin-bottom: 10px;
+        }
+
+        .dd-handle, .dd2-content {
+            background: #E1E3EF;
+        }
+
+        .comment .comment-body {
+            margin-left: 0;
+        }
+
+            .comment .comment-body:hover {
+                background-color: #EDEDF9;
+            }
+
+            .comment .comment-body .comment-header span {
+                color: #424242;
+            }
+
+        [ng-controller='RequestsViewModel as rsvm'] .widget .widget-body {
+            min-height: 400px;
+        }
+    </style>
     @RenderSection("css", required: false)
 </head>
 <body>
-    @RenderBody()
+    <div class="conten" ng-app="dashboardApp" ng-controller="MainViewModel as mvm" ng-init="mvm.onViewShown()">
+        <!-- Loading Container -->
+        @*<div class="loading-container">
+                <div class="loader"></div>
+            </div>*@
+        <!--  /Loading Container -->
+        <!-- Nav Bar -->
+        <div class="navbar" data-spy="affix" data-offset-top="35">
+            <div class="navbar-inner">
+                <div class="navbar-container">
+                    <!-- Navbar Brand -->
+                    <div class="navbar-brand">
+                        <button ng-href="/" ng-click="mvm.navigateHome()" class="btn btn-default shiny redmondblue btn-circle btn-xs"><i class="glyphicon glyphicon-bell"></i></button>
+                    </div>
+                    <!-- /Navbar Brand -->
+                    <!-- Account Area and Settings --->
+                    <div class="navbar-header pull-right">
+                        <div class="navbar-account">
+                            <ul class="account-area">
+                                <li>
+                                    <div class="btn-group">
+                                        <a id="btn-newcard" class="btn btn-success" href="#"><i class="fa fa-plus"></i>New Card</a>
+                                        <a class="btn btn-default  dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);"><i class="fa fa-angle-down"></i></a>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a href="javascript:void(0);">Close Account</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="#" class="btn btn-default shiny redmondblue btn-circle btn-xs dropdown-toggle" data-toggle="dropdown" title="User"><i class="fa fa-user"></i></a>
+                                    <!--Tasks Dropdown-->
+                                    <ul class="pull-right dropdown-menu dropdown-tasks dropdown-arrow ">
+                                        <li class="dropdown-header bordered-blue">
+                                            <span id="username"></span> - <span id="accountnumber"></span>
+                                        </li>
+                                        <li>
+                                            <a href="#">
+                                                <div class="clearfix">
+                                                    <span id="email"></span>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <!--/Tasks Dropdown-->
+                                </li>
+                                <!-- /Account Area -->
+                                <!--Note: notice that setting div must start right after account area list.
+                                no space must be between these elements-->
+                                <!-- Settings -->
+                            </ul>
+                            <!-- Settings -->
+                        </div>
+                    </div>
+                    <!-- /Account Area and Settings -->
+                </div>
+            </div>
+        </div>
+        <!-- /Nav Bar -->
+        <!-- Main Container -->
+        <div class="main-container container-fluid">
+            <!-- Page Container -->
+            <div class="page-container">
+
+                <!-- Page Sidebar Menu -->
+                <div class="page-sidebar menu-compact" id="sidebar">
+                    <ul class="nav sidebar-menu">
+
+                        <!--Dashboard-->
+                        <li class="active">
+                            <a href="#">
+                                <i class="menu-icon glyphicon glyphicon-home"></i>
+                                <span class="menu-text"> Dashboard </span>
+                            </a>
+                        </li>
+
+                        <!--Stats-->
+                        <li>
+                            <a href="stats.html">
+                                <i class="menu-icon fa fa-bar-chart-o"></i>
+                                <span class="menu-text"> Stats </span>
+                            </a>
+                        </li>
+
+                        <!--Settings-->
+                        <li>
+                            <a href="settings.html">
+                                <i class="menu-icon fa fa-gear"></i>
+                                <span class="menu-text"> Settings </span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /Page Sidebar Menu-->
+                <!-- Page Content -->
+                <div class="page-content animated fadeInDown">
+                    <!-- Page Breadcrumb -->
+                    <div class="page-breadcrumbs">
+                        <ul class="breadcrumb">
+                            <li class="active" ng-repeat="breadcrumb in dvm.breadcrumbs">
+                                <a href="/">Home</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- /Page Breadcrumb -->
+                    <!-- Page Header -->
+                    <div class="page-header position-relative">
+                        <div class="header-title">
+                            <h1>
+                                Drafts
+                            </h1>
+                        </div>
+                    </div>
+                    <!-- /Page Header -->
+
+                    @RenderBody()
+                </div>
+                <!-- /Page Content -->
+            </div>
+        </div>
+        <!-- /Main Container -->
+    </div>
+
+    <!-- basic scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-slimScroll/1.3.8/jquery.slimscroll.min.js"></script>
+    <script src="site.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/zeroclipboard/2.2.0/ZeroClipboard.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/dataTables.bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.1/summernote.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-tagsinput/1.3.6/jquery.tagsinput.min.js"></script>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2-rc.1/js/select2.full.js"></script>-->
+
+    <script src="~/assets/js/fileupload/vendor/jquery.ui.widget.js"></script>
+    <script src="~/assets/js/fileupload/jquery.fileupload.js"></script>
+    <script src="~/assets/js/project.api.js"></script>
+
+    <script src="~/scripts/angular.js"></script>
+    @*<script src="https://rawgit.com/esvit/ng-table/master/dist/ng-table.min.js"></script>*@
+    <script src="~/scripts/angular-sanitize.js"></script>
+    <script src="~/scripts/angular-route.js"></script>
+    <script src="~/scripts/angular-ui/ui-bootstrap-tpls.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.js"></script>
+    @*<script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-1.3.3.js"></script>*@
+
+
+    <!-- view model scripts -->
+    <script src="~/app/app.js"></script>
+    <script src="~/app/mainviewmodel.js"></script>
+    <script src="~/app/projectRequests/requests/requests.js"></script>
+    <script src="~/app/projectRequests/requests/newrequest.js"></script>
+    <script src="~/app/projectRequests/requests/request.js"></script>
+
     @RenderSection("bodyScripts", required: false)
     @RenderSection("jsCode", required: false)
 </body>
