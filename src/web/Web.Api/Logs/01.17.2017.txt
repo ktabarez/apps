@@ -1,0 +1,29 @@
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"orgUsers":{"Role":"user","IsActive":true,"UserId":2154,"DomainLogin":"domain loginname","UserName":"someusername","EmailAddress":"yourmom@gmail.com","DepartmentDescription":"some dp des","DepartmentId":33}}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"orgUsers":{"Role":"user","IsActive":true,"UserId":2154,"DomainLogin":"domain loginname","UserName":"someusername","EmailAddress":"yourmom@gmail.com","DepartmentDescription":"some dp des","DepartmentId":33}}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"orgUsers":{"Role":"user","IsActive":true,"UserId":2154,"DomainLogin":"domain loginname","UserName":"someusername","EmailAddress":"yourmom@gmail.com","DepartmentDescription":"some dp des","DepartmentId":33}}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"orgUsers":{"Role":"user","IsActive":true,"UserId":2154,"DomainLogin":"domain loginname","UserName":"someusername","EmailAddress":"yourmom@gmail.com","DepartmentDescription":"some dp des","DepartmentId":33}}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"orgUsers":{"Role":"user","IsActive":true,"UserId":2154,"DomainLogin":"domain loginname","UserName":"someusername","EmailAddress":"yourmom@gmail.com","DepartmentDescription":"some dp des","DepartmentId":33}}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"orgUsers":{"Role":"user","IsActive":true,"UserId":2154,"DomainLogin":"domain loginname","UserName":"someusername","EmailAddress":"yourmom@gmail.com","DepartmentDescription":"some dp des","DepartmentId":33}}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsRefreshed","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez"}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsRefreshed","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez"}
+{"type":"claimsRefreshed","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez"}
+{"type":"claimsRefreshed","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez"}
+{"type":"claimsRefreshed","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez"}
+{"type":"claimsRefreshed","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez"}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"message":"invalid_grant The user name or password is incorrect"}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"message":"invalid_grant The user name or password is incorrect"}}

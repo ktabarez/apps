@@ -1,0 +1,63 @@
+﻿<!-- Page Body -->
+<div class="page-body" ng-controller="RequestsViewModel as rsvm" ng-init="rsvm.onViewSown()">
+    <div class="row">
+        <div class="col-lg-12 col-sm-12 col-xs-12 {{rsvm.needsMyApprovalRowStyle}}">
+            <div class="widget radius-bordered">
+                <div class="widget-header bg-danger">
+                    <span class="widget-caption">Needs My Approval</span>
+                    <div class="widget-buttons">
+                        <a href="#" data-toggle="refresh">
+                            <i class="fa fa-refresh"></i>
+                        </a>
+                    </div><!--Widget Buttons-->
+                </div><!--Widget Header-->
+                <div class="widget-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <table class="table table-bordered table-hover table-striped" id="needs-my-approval-table">
+                                <thead>
+                                    <tr role="row">
+                                        <th class="ui-state-default">Description</th>
+                                        <th class="ui-state-default">Actions</th>
+                                    </tr>
+                                </thead>
+
+                                <tfoot>
+                                    <tr>
+                                        <th rowspan="1"><input type="text" name="search_description" placeholder="Search description" class="form-control input-sm"></th>
+                                        <th rowspan="1"></th>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+                                    <!--<tr>
+                                        <td><a ng-href="/2">some title 234</a></td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-default btn-sm shiny icon-only"><i class="fa fa-thumbs-o-up success"></i></button>
+                                                <button type="button" class="btn btn-default btn-sm shiny icon-only"><i class="fa fa-thumbs-o-down warning"></i></button>
+                                                <button type="button" class="btn btn-default btn-sm shiny icon-only"><i class="fa fa-reply danger"></i></button>
+                                                <button type="button" class="btn btn-default btn-sm shiny icon-only"><i class="fa fa-hand-stop-o danger"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="/2">Project that needs your approval 2</a></td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-default btn-sm shiny icon-only"><i class="fa fa-thumbs-o-up success"></i></button>
+                                                <button type="button" class="btn btn-default btn-sm shiny icon-only"><i class="fa fa-thumbs-o-down warning"></i></button>
+                                                <button type="button" class="btn btn-default btn-sm shiny icon-only"><i class="fa fa-reply danger"></i></button>
+                                                <button type="button" class="btn btn-default btn-sm shiny icon-only"><i class="fa fa-hand-stop-o danger"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>-->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Body -->

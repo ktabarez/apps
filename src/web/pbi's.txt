@@ -1,0 +1,1 @@
+Use the user table to determine the type of user: Confidential, Non-Confidential, Domain user, Non-Domain User

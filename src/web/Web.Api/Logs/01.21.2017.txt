@@ -1,0 +1,3 @@
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"FIRST_AGAIN\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsRefreshed","endpoint":"http://localhost:12859/token?orgId=1","userName":"FIRST_AGAIN\\kain.tabarez"}
+{"type":"claimsRefreshed","endpoint":"http://localhost:12859/token?orgId=1","userName":"FIRST_AGAIN\\kain.tabarez"}

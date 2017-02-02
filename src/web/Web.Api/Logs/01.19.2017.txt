@@ -1,0 +1,10 @@
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"message":"invalid_grant The user name or password is incorrect"}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"message":"invalid_grant The user name or password is incorrect"}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"message":"invalid_grant The user name or password is incorrect"}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"message":"invalid_grant The user name or password is incorrect"}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"firstagain\\kain.tabarez","data":{"message":"invalid_grant The user name or password is incorrect"}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"FIRST_AGAIN\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"FIRST_AGAIN\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"FIRST_AGAIN\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsRefreshed","endpoint":"http://localhost:12859/token?orgId=1","userName":"FIRST_AGAIN\\kain.tabarez"}
+{"type":"claimsRefreshed","endpoint":"http://localhost:12859/token?orgId=1","userName":"FIRST_AGAIN\\kain.tabarez"}
