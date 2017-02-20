@@ -12,10 +12,11 @@ namespace Web.Website
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.MapRoute(
-                        "NewProjectRequest",
+                        "dashboardApp",
                         "{*catchall}",
                         new { controller = "Home", action = "Index" }  // Parameter defaults
                     );
+
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",

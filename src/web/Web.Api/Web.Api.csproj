@@ -116,6 +116,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web.Cors, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Cors.5.2.3\lib\net45\System.Web.Cors.dll</HintPath>
@@ -195,7 +196,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Controllers\Auth\" />
+    <Folder Include="Views\MemberFeedback\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiSettings.cs" />
@@ -236,10 +237,84 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HealthController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MemberFeedbackController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="CustomLogServiceOptions.cs" />
     <Compile Include="CustomPrincipal.cs" />
+    <Compile Include="DataAccess\MemberFeedback\AuditLog.cs">
+      <DependentUpon>MemberFeedbackModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\MemberFeedback\CNFG_Category.cs">
+      <DependentUpon>MemberFeedbackModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\MemberFeedback\CNFG_FeedbackType.cs">
+      <DependentUpon>MemberFeedbackModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\MemberFeedback\CNFG_FunctionalArea.cs">
+      <DependentUpon>MemberFeedbackModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\MemberFeedback\CNFG_ReportDate.cs">
+      <DependentUpon>MemberFeedbackModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\MemberFeedback\CNFG_Source.cs">
+      <DependentUpon>MemberFeedbackModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\MemberFeedback\CNFG_Status.cs">
+      <DependentUpon>MemberFeedbackModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\MemberFeedback\CNFG_SystemUser.cs">
+      <DependentUpon>MemberFeedbackModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\MemberFeedback\MemberFeedback.cs">
+      <DependentUpon>MemberFeedbackModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\MemberFeedback\MemberFeedbackModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MemberFeedbackModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\MemberFeedback\MemberFeedbackModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MemberFeedbackModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\MemberFeedback\MemberFeedbackModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MemberFeedbackModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\MemberFeedback\MemberFeedback_History.cs">
+      <DependentUpon>MemberFeedbackModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\MemberFeedback\Repos.cs" />
+    <Compile Include="DataAccess\MemberFeedback\sp_helpdiagramdefinition_Result.cs">
+      <DependentUpon>MemberFeedbackModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\MemberFeedback\sp_helpdiagrams_Result.cs">
+      <DependentUpon>MemberFeedbackModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\MemberFeedback\sysdiagram.cs">
+      <DependentUpon>MemberFeedbackModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\MemberFeedback\udf_get_StringInput_Result.cs">
+      <DependentUpon>MemberFeedbackModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\MemberFeedback\usp_rpt_MemberFeedback_Detail_Result.cs">
+      <DependentUpon>MemberFeedbackModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\MemberFeedback\usp_rpt_MemberFeedback_Source_Summary_Result.cs">
+      <DependentUpon>MemberFeedbackModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\MemberFeedback\usp_rpt_MemberFeedback_Summary_Result.cs">
+      <DependentUpon>MemberFeedbackModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\MemberFeedback\usp_rpt_MemberFeedback_Trend_Result.cs">
+      <DependentUpon>MemberFeedbackModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\MemberFeedback\vw_MemberFeedbackDetails.cs">
+      <DependentUpon>MemberFeedbackModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -258,6 +333,16 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="DataAccess\MemberFeedback\MemberFeedbackModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>MemberFeedbackModel.edmx</DependentUpon>
+      <LastGenOutput>MemberFeedbackModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="DataAccess\MemberFeedback\MemberFeedbackModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>MemberFeedbackModel.edmx</DependentUpon>
+      <LastGenOutput>MemberFeedbackModel.cs</LastGenOutput>
+    </Content>
     <Content Include="favicon.ico" />
     <Content Include="fiddler-tests.txt" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -289,6 +374,13 @@
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap.min.css.map" />
     <Content Include="Content\bootstrap.css.map" />
+    <EntityDeploy Include="DataAccess\MemberFeedback\MemberFeedbackModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>MemberFeedbackModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="DataAccess\MemberFeedback\MemberFeedbackModel.edmx.diagram">
+      <DependentUpon>MemberFeedbackModel.edmx</DependentUpon>
+    </Content>
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -388,6 +480,9 @@
       <SubType>Designer</SubType>
     </Content>
     <None Include="Project_Readme.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

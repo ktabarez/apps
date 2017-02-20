@@ -78,15 +78,15 @@ namespace Common.Repository
         protected virtual IQueryable<TEntity> GetQuery(Expression<Func<TEntity, bool>> filter = null, int page = 0, int limit = 0, params string[] includeProperties)
         {
             IQueryable<TEntity> query = _entities;
-
-            if (filter != null)
-                query = _entities.Where(filter);
-
+            
             if (includeProperties.Length != 0)
                 query = query.Include(string.Join(",", includeProperties));
 
             if (page != 0)
                 query.Skip(limit * page).Take(limit);
+
+            if (filter != null)
+                query = query.Where(filter);
 
             return query;
         }

@@ -12,7 +12,7 @@ namespace IdentityProviders.SqlServerProvider
     using System;
     using System.Collections.Generic;
     
-    public partial class Org 
+    public partial class Org
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Org()

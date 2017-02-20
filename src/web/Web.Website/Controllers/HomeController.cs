@@ -10,19 +10,14 @@ namespace Web.Website.Controllers
     {
         public ActionResult Index()
         {
-            return View();
-        }
-
-        public ActionResult Stats()
-        {
-            ViewBag.Message = "Your application description page.";
+            ViewBag.PageTitle = "Home page.";
 
             return View();
         }
 
-        public ActionResult Settings()
+        public ActionResult Memberfeedbacks()
         {
-            ViewBag.Message = "Your contact page.";
+            ViewBag.PageTitle = "Feedbacks page.";
 
             return View();
         }

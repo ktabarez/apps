@@ -13,6 +13,7 @@ using IdentityProviders.SqlServerProvider;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System;
+using Web.Api.DataAccess.MemberFeedback;
 
 namespace Web.Api
 {
@@ -125,7 +126,6 @@ namespace Web.Api
             builder.Register(c => new ApiSettings()).SingleInstance();
 
             /*sql repositories*/
-
             builder.Register(c => new PasswordHashProvider()).As<IPasswordHashPovider>();
             builder.Register(c => new OrgClientRepo(c.Resolve<AppFrameworkEntities>())).As<IRepository<OrgClient>>().OnActivated(i => i.Instance.OnDbError += HandleOnDbError).InstancePerRequest();
             builder.Register(c => new RefreshTokenRepo(c.Resolve<AppFrameworkEntities>())).As<IRepository<OrgUserRefreshToken>>().OnActivated(i => i.Instance.OnDbError += HandleOnDbError).InstancePerRequest();
@@ -143,6 +143,12 @@ namespace Web.Api
             builder.Register(c => new GlobalUserRoleRepo(c.Resolve<AppFrameworkEntities>())).As<IRepository<OrgGlobalUserRole>>().OnActivated(i => i.Instance.OnDbError += HandleOnDbError).InstancePerRequest();
             builder.Register(c => new UserRefreshTokenRepo(c.Resolve<AppFrameworkEntities>())).As<IRepository<UserRefreshToken>>().OnActivated(i => i.Instance.OnDbError += HandleOnDbError).InstancePerRequest();
             builder.Register(c => new OrgAppUserMetadataRepo(c.Resolve<AppFrameworkEntities>())).As<IRepository<OrgAppUserMetadata>>().OnActivated(i => i.Instance.OnDbError += HandleOnDbError).InstancePerRequest();
+
+            /*memberfeedback*/
+            builder.Register(c => new MemberFeedbackEntities()).As<MemberFeedbackEntities>();
+            builder.Register(c => new MemberFeedbackRepo(c.Resolve<MemberFeedbackEntities>())).As<IRepository<MemberFeedback>>().OnActivated(i => i.Instance.OnDbError += HandleOnDbError).InstancePerRequest();
+            builder.Register(c => new MemberFeedbackUserRepo(c.Resolve<MemberFeedbackEntities>())).As<IRepository<CNFG_SystemUser>>().OnActivated(i => i.Instance.OnDbError += HandleOnDbError).InstancePerRequest();
+
         }
 
         public static void RegisterOwin(IAppBuilder app)

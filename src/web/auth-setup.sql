@@ -1,3 +1,4 @@
+
 use AppFramework
 go
 
@@ -98,7 +99,7 @@ create table [auth].[OrgUser]
 	,modified_by varchar(50) not null
 	,modified_dt datetime not null
 
-	constraint pk_User_Id primary key (Id asc)	
+	constraint pk_OrgUser_Id_OrgId primary key (Id)	
 )
 
 alter table [auth].[OrgUser] add constraint [df_OrgUser_IsLockoutEnabled] default (0) for [IsLockoutEnabled]
@@ -128,7 +129,7 @@ create table [auth].[OrgClientType]
 	,modified_by varchar(50) not null
 	,modified_dt datetime not null
 
-	constraint pk_OrgClientType_Id primary key (Id asc)
+	constraint pk_OrgClientType_Id primary key (Id)
 )
 
 create table [auth].[OrgClient]
@@ -426,6 +427,31 @@ alter table [auth].[UserRefreshToken] add constraint [df_UserRefreshToken_create
 alter table [auth].[UserRefreshToken] add constraint [df_UserRefreshToken_modified_by] default (user_name()) for [modified_by]
 alter table [auth].[UserRefreshToken] add constraint [df_UserRefreshToken_modified_dt] default (getdate()) for [modified_dt]
 
+--SELECT 'CREATE INDEX [IX_' + f.name + '] ON Auth.' + OBJECT_NAME(f.parent_object_id) + '(' + COL_NAME(fc.parent_object_id, fc.parent_column_id) +')'
+--FROM sys.foreign_keys AS f 
+--INNER JOIN sys.foreign_key_columns AS fc 
+--ON f.OBJECT_ID = fc.constraint_object_id
+
+CREATE INDEX [IX_fk_OrgUser_Org_Id] ON Auth.OrgUser(OrgId)
+CREATE INDEX [IX_fk_OrgClientType_Org_Id] ON Auth.OrgClientType(OrgId)
+CREATE INDEX [IX_fk_OrgClient_Org_Id] ON Auth.OrgClient(OrgId)
+CREATE INDEX [IX_fk_OrgGlobalRole_Org_Id] ON Auth.OrgGlobalRole(OrgId)
+CREATE INDEX [IX_fk_OrgRole_Org_Id] ON Auth.OrgRole(OrgId)
+CREATE INDEX [IX_fk_OrgApp_Org_Id] ON Auth.OrgApp(OrgId)
+CREATE INDEX [IX_fk_OrgUserRefreshToken_OrgUser_Id] ON Auth.OrgUserRefreshToken(OrgUserId)
+CREATE INDEX [IX_fk_OrgGlobalUserRole_OrgUser_Id] ON Auth.OrgGlobalUserRole(OrgUserId)
+CREATE INDEX [IX_fk_OrgUserRole_OrgUser_Id] ON Auth.OrgUserRole(OrgUserId)
+CREATE INDEX [IX_fk_OrgAppUser_User_Id] ON Auth.OrgAppUser(UserId)
+CREATE INDEX [IX_fk_OrgClient_OrgClientType_Id] ON Auth.OrgClient(ClientTypeId)
+CREATE INDEX [IX_fk_OrgUserRefreshToken_OrgClient_Id] ON Auth.OrgUserRefreshToken(OrgClientId)
+CREATE INDEX [IX_fk_OrgGlobalUserRole_OrgGlobalRole_Id] ON Auth.OrgGlobalUserRole(OrgGlobalRoleId)
+CREATE INDEX [IX_fk_OrgUserRole_OrgRole_Id] ON Auth.OrgUserRole(OrgRoleId)
+CREATE INDEX [IX_fk_OrgAppRole_OrgApp_Id] ON Auth.OrgAppRole(OrgAppId)
+CREATE INDEX [IX_fk_OrgAppUser_OrgApp_Id] ON Auth.OrgAppUser(OrgAppId)
+CREATE INDEX [IX_fk_OrgAppUserRole_OrgAppRole_Id] ON Auth.OrgAppUserRole(OrgAppRoleId)
+CREATE INDEX [IX_fk_OrgAppUserRole_OrgAppUser_Id] ON Auth.OrgAppUserRole(OrgAppUserId)
+CREATE INDEX [IX_fk_OrgAppUserAuthIp_OrgAppUser_Id] ON Auth.OrgAppUserAuthIp(OrgAppUserId)
+CREATE INDEX [IX_fk_OrgAppUserMetadata_OrgAppUser_Id] ON Auth.OrgAppUserMetadata(OrgAppUserId)
 
 insert into auth.org select 'mfcu', 1, 0, 'someone', GETUTCDATE(), 'someone', GETUTCDATE()
 
@@ -441,21 +467,15 @@ insert into auth.OrgGlobalRole select 1, 'godmode', 1, 0, 'me', GETUTCDATE(), 'm
 
 /*
 insert into auth.OrgGlobalUserRole select 1, 1,  1, 0, 'me', GETUTCDATE(), 'me', GETUTCDATE()
-
 insert into auth.OrgApp select 1, 'memberFeedback', 1, 0, 'me', GETUTCDATE(), 'me', GETUTCDATE()
-
 insert into auth.OrgAppRole select 1, 'admin', 1, 0, 'me', GETUTCDATE(), 'me', GETUTCDATE()
 insert into auth.OrgAppRole select 1, 'assignable', 1, 0, 'me', GETUTCDATE(), 'me', GETUTCDATE()
-
 select '{ "username": "FIRST_AGAIN\\' + domainlogin + '","email": "' + emailaddress + '", "orgId": 1 },' from MemberFeedback.mbr.CNFG_SystemUser
-
 insert into auth.OrgAppUser
 select ou.Id, 1, 1, 0, 'me', GETUTCDATE(), 'me', GETUTCDATE()
 from MemberFeedback.mbr.CNFG_SystemUser mu
 	join AppFramework.auth.OrgUser ou
 		on mu.EmailAddress = ou.Email
-
-
 insert into auth.OrgAppUserRole
 select oau.Id, 2, 1, 0, 'me', GETUTCDATE(), 'me', GETUTCDATE()
 from MemberFeedback.mbr.CNFG_SystemUser mu
@@ -464,7 +484,6 @@ from MemberFeedback.mbr.CNFG_SystemUser mu
 		and mu.boolIsAssignable = 1
 	join AppFramework.auth.OrgAppUser oau
 		on ou.Id = oau.UserId
-
 insert into auth.OrgAppUserRole
 select oau.Id, 1, 1, 0, 'me', GETUTCDATE(), 'me', GETUTCDATE()
 from MemberFeedback.mbr.CNFG_SystemUser mu

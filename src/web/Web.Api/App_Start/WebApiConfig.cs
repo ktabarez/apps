@@ -21,7 +21,7 @@ namespace Web.Api
             config.Services.Add(typeof(IExceptionLogger), new DefaultExceptionLogger(DefaultExceptionLogger.HandleOnExceptionLoggged));
 
             config.EnableCors((new EnableCorsAttribute("*", "*", "*")));
-            config.Filters.Add(new RoleAuthorizeFilter(globalRoles: new [] { "wtf" }));
+            //config.Filters.Add(new RoleAuthorizeFilter(globalRoles: new [] { "wtf" }));
             // Web API routes
             config.MapHttpAttributeRoutes();
 

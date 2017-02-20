@@ -15,7 +15,7 @@ namespace IdentityProviders.SqlServerProvider
     public partial class OrgClient
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public OrgClient() 
+        public OrgClient()
         {
             this.OrgUserRefreshTokens = new HashSet<OrgUserRefreshToken>();
         }

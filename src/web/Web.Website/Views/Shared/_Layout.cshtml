@@ -1,14 +1,27 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿
+@{
+#if Debug
+    ViewBag.IsInDebugMode = true;
+    ViewBag.ApiBaseUrl = "http://localhost:12859";
+#else
+    ViewBag.IsInDebugMode = false;
+    ViewBag.ApiBaseUrl = "http://localhost:12859";
+#endif
+
+    ViewBag.BaseUrl = @Request.Url.GetLeftPart(UriPartial.Authority);
+    ViewBag.UserName = Request.LogonUserIdentity.Name == null ? "undefined" : Request.LogonUserIdentity.Name.Replace("\\", "\\\\");
+}
+<!DOCTYPE html>
+<html lang="en" ng-app="dashboardApp" ng-controller="MainViewModel as mvm" ng-init="mvm.onViewShown()">
 <head>
-    <title>Project Requests</title>
-    @RenderSection("title", required: false)
+    @RenderSection("title", required: true)
 
     <meta charset="utf-8" />
     <meta name="description" content="my projects" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
     @RenderSection("meta", required: false)
 
     <!--Basic Styles-->
@@ -21,49 +34,11 @@
     <!--site styles-->
     <link href="~/assets/css/site.css" rel="stylesheet" type="text/css" rel="stylesheet" />
 
-    <!--Page Related styles-->
-    <link href="~/assets/css/dataTables.bootstrap.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2-rc.1/css/select2.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-css/1.4.6/select2-bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.1/summernote.css" />
-    <link rel="stylesheet" href="https://cdn.rawgit.com/esvit/ng-table/1.0.0/dist/ng-table.min.css">
     @RenderSection("links", required: false)
     @RenderSection("headScripts", required: false)
     @RenderSection("styleSheets", required: false)
 
     <style>
-        /*.navbar {
-                height: 60px;
-                min-height: 60px;
-            }
-
-                .navbar .navbar-inner {
-                    min-height: 60px;
-                    background: -webkit-linear-gradient(rgb(98, 159, 206), rgba(234, 243, 251, 0));
-                    background: -o-linear-gradient(rgb(98, 159, 206), rgba(234, 243, 251, 0));
-                    background: -moz-linear-gradient(rgb(98, 159, 206), rgba(234, 243, 251, 0));
-                    background: linear-gradient(rgb(98, 159, 206), rgba(234, 243, 251, 0));
-                    background: red;
-                    background: -webkit-linear-gradient(rgb(98, 159, 206), rgba(234, 243, 251, 0));
-                    background: -o-linear-gradient(rgb(98, 159, 206), rgba(234, 243, 251, 0));
-                    background: -moz-linear-gradient(rgb(98, 159, 206), rgba(234, 243, 251, 0));
-                    background: linear-gradient(rgb(98, 159, 206), rgba(234, 243, 251, 0));
-                }
-
-                .navbar .navbar-header {
-                    padding: 4px;
-                }
-
-
-
-            .page-sidebar.menu-compact + ng-view .page-content {
-                margin-left: 43px;
-            }
-
-            .page-sidebar.hide + ng-view .page-content {
-                margin-left: 0 !important;
-            }*/
-
         .navbar .navbar-header small {
             background: url("../../assets/img/mfcu-bell.png") no-repeat;
             border-style: none;
@@ -372,7 +347,7 @@
     @RenderSection("css", required: false)
 </head>
 <body>
-    <div class="conten" ng-app="dashboardApp" ng-controller="MainViewModel as mvm" ng-init="mvm.onViewShown()">
+    <div class="conten">
         <!-- Loading Container -->
         @*<div class="loading-container">
                 <div class="loader"></div>
@@ -391,17 +366,6 @@
                     <div class="navbar-header pull-right">
                         <div class="navbar-account">
                             <ul class="account-area">
-                                <li>
-                                    <div class="btn-group">
-                                        <a id="btn-newcard" class="btn btn-success" href="#"><i class="fa fa-plus"></i>New Card</a>
-                                        <a class="btn btn-default  dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);"><i class="fa fa-angle-down"></i></a>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a href="javascript:void(0);">Close Account</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
                                 <li>
                                     <a href="#" class="btn btn-default shiny redmondblue btn-circle btn-xs dropdown-toggle" data-toggle="dropdown" title="User"><i class="fa fa-user"></i></a>
                                     <!--Tasks Dropdown-->
@@ -472,8 +436,8 @@
                     <!-- Page Breadcrumb -->
                     <div class="page-breadcrumbs">
                         <ul class="breadcrumb">
-                            <li class="active" ng-repeat="breadcrumb in dvm.breadcrumbs">
-                                <a href="/">Home</a>
+                            <li class="active" ng-repeat="breadcrumb in mvm.breadcrumbs">
+                                <a ng-href="{{breadcrumb.location}}">{{breadcrumb.name}}</a>
                             </li>
                         </ul>
                     </div>
@@ -482,7 +446,7 @@
                     <div class="page-header position-relative">
                         <div class="header-title">
                             <h1>
-                                Drafts
+                                {{mvm.pageTitle}}
                             </h1>
                         </div>
                     </div>
@@ -500,7 +464,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-slimScroll/1.3.8/jquery.slimscroll.min.js"></script>
-    <script src="site.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/jquery.dataTables.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/zeroclipboard/2.2.0/ZeroClipboard.min.js"></script>
@@ -510,10 +473,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-tagsinput/1.3.6/jquery.tagsinput.min.js"></script>
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2-rc.1/js/select2.full.js"></script>-->
 
-    <script src="~/assets/js/fileupload/vendor/jquery.ui.widget.js"></script>
-    <script src="~/assets/js/fileupload/jquery.fileupload.js"></script>
-    <script src="~/assets/js/project.api.js"></script>
-
     <script src="~/scripts/angular.js"></script>
     @*<script src="https://rawgit.com/esvit/ng-table/master/dist/ng-table.min.js"></script>*@
     <script src="~/scripts/angular-sanitize.js"></script>
@@ -522,13 +481,41 @@
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.js"></script>
     @*<script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-1.3.3.js"></script>*@
 
-
     <!-- view model scripts -->
-    <script src="~/app/app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-datatables/0.5.7/angular-datatables.min.js"></script>
+    <script src="~/app/app.base.js"></script>
+    <script src="~/app/app.module.auth.js"></script>
+    <script src="~/app/app.module.cookies.js"></script>
+    <script src="~/libs/moment.js"></script>
+    <script src="~/app/app.module.moment.js"></script>
+    <script src="~/app/app.module.js"></script>
+    <script src="~/app/app.constants.js"></script>
+    <script src="~/app/app.directives.js"></script>
+    <script>
+        var ConfigurationService = function () {
+            var self = this;
+
+            self.isInDebugMode = '@ViewBag.IsInDebugMode';
+            self.username = '@ViewBag.UserName';
+            self.clientId = 'ngDashboardApp';
+            self.orgId = '1';
+            self.apiRefreshIntervalInSeconds = 5;
+            self.urls = {
+                website: {
+                    baseUrl: '@ViewBag.BaseUrl',
+                },
+                api: {
+                    baseUrl: '@ViewBag.ApiBaseUrl'
+                }
+            }
+        }
+
+        app.service('ConfigurationService', [ConfigurationService]);
+    </script>
+    <script src="~/app/app.services.js"></script>
+    <script src="~/app/app.config.js"></script>
+    <script src="~/app/app.run.js"></script>
     <script src="~/app/mainviewmodel.js"></script>
-    <script src="~/app/projectRequests/requests/requests.js"></script>
-    <script src="~/app/projectRequests/requests/newrequest.js"></script>
-    <script src="~/app/projectRequests/requests/request.js"></script>
 
     @RenderSection("bodyScripts", required: false)
     @RenderSection("jsCode", required: false)

@@ -1,12 +1,12 @@
 ﻿@{
-    ViewBag.Title = "Drafts";
+    ViewBag.Title = "Home Page";
 
     var projectRequestId = Model == null ? 0 : Model.Id;
 }
 
 @section title
 {
-
+    <title>Member Feedback</title>
 }
 
 @section meta
@@ -16,7 +16,11 @@
 
 @section links
 {
-
+    <!--Page Related styles-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2-rc.1/css/select2.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-css/1.4.6/select2-bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.1/summernote.css" />
+    <link rel="stylesheet" href="https://cdn.rawgit.com/esvit/ng-table/1.0.0/dist/ng-table.min.css">
 }
 
 @section headScripts
@@ -26,17 +30,29 @@
 
 @section css
 {
-
+    <style>
+    </style>
 }
 
-<ng-view></ng-view>
+<!-- Page Body -->
+<div class="page-body" ng-controller="DashboardMainViewModel as dmvm" ng-init="dmvm.onViewShown()">
+    <ng-view></ng-view>
+</div>
+<!-- /Page Body -->
 
 @section bodyScripts
 {
+    <!--page related scripts-->
+    <script src="~/assets/js/datatable/jquery.dataTables.min.js"></script>
+    <script src="~/assets/js/datatable/ZeroClipboard.js"></script>
+    <script src="~/assets/js/datatable/dataTables.bootstrap.min.js"></script>
+    <script src="~/assets/js/datatable/datatables-init.js"></script>
 
-}
+    <!--home widget view models-->
+    <script src="~/app/dashboard/mainViewModel.js"></script>
+    <script src="~/app/dashboard/memberFeedbackWidgetViewModel.js"></script>
 
-@section jscode
-{
-
+    <!--memberFeedback view models-->
+    <script src="~/app/dashboard/memberFeedback/indexViewModel.js"></script>
+    <script src="~/app/dashboard/memberFeedback/itemViewModel.js"></script>
 }
