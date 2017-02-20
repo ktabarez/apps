@@ -1,0 +1,21 @@
+﻿<div class="row" ng-controller="MemberFeedbackHomeViewModel as mfivm" ng-init="mfhvm.onViewShown()">
+    <div class="col-lg-12 col-sm-12 col-xs-12">
+        <div class="widget radius-bordered">
+            <div class="widget-header bg-azure">
+                <span class="widget-caption">{{mfhvm.widgetName}}</span>
+                <div class="widget-buttons">
+                    <a href="#" ng-click="mfhvm.refresh" data-toggle="refresh">
+                        <i class="fa fa-refresh"></i>
+                    </a>
+                </div><!--Widget Buttons-->
+            </div><!--Widget Header-->
+            <div class="widget-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        {{mfhvm.feedbacks}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

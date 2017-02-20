@@ -1,0 +1,19 @@
+﻿<div class="row" ng-controller="MemberFeedbackItemViewModel as mfivm" ng-init="mfivm.onViewShown()">
+    <div class="col-lg-12 col-sm-12 col-xs-12">
+        <div class="widget radius-bordered">
+            <div class="widget-header bg-blue">
+                <span class="widget-caption">{{mfivm.widgetName}}</span>
+                <div class="widget-buttons">
+                    <a href="#" ng-click="mfivm.refresh" data-toggle="refresh">
+                        <i class="fa fa-refresh"></i>
+                    </a>
+                </div><!--Widget Buttons-->
+            </div><!--Widget Header-->
+            <div class="widget-body">
+                <div class="row">
+                    {{mfivm.feedback | json}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

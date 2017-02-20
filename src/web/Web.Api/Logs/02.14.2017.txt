@@ -1,0 +1,5 @@
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"FIRSTAGAIN\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"FIRSTAGAIN\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"FIRSTAGAIN\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"FIRSTAGAIN\\kain.tabarez","data":{"orgUsers":null}}
+{"type":"claimsGenerated","endpoint":"http://localhost:12859/token","userName":"FIRSTAGAIN\\kain.tabarez","data":{"orgUsers":null}}

@@ -1,0 +1,1 @@
+﻿var app = angular.module('dashboardApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'ngSanitize', 'http-auth-interceptor', 'ngCookies', 'angularMoment', 'datatables']);
