@@ -9,37 +9,6 @@
     //                data: config
     //            });
 
-    //            return config;
-    //        },
-    //        requestError: function (rejection) {
-
-    //            console.log({
-    //                msg: 'ajax.request.error',
-    //                url: config.url,
-    //                data: rejection
-    //            });
-
-    //            return $q.reject(rejection);
-    //        },
-    //        response: function (res) {
-    //            console.log({
-    //                msg: 'ajax.response',
-    //                url: res.url,
-    //                data: res
-    //            });
-
-    //            return res;
-    //        },
-    //        responseError: function (rejection) {
-    //            console.log({
-    //                msg: 'ajax.response.error',
-    //                url: rejection.url,
-    //                data: rejection
-    //            });
-    //        }
-    //    };
-    //}]);
-
     /*------------headers------------*/
 
     //initialize get if not there

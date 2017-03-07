@@ -2,15 +2,16 @@
 var MemberFeedbackItemViewModel = function ($scope, $interval, $routeParams, ConfigurationService, MemberFeedbackService) {
     var self = this;
 
-    self.widgetName = 'Member Feedback Home';
+    self.widgetName = 'Member Feedback Details';
     self.name = arguments.callee.name;
+    $scope.$parent.$parent.$parent.mvm.pageTitle = 'Member Feedback Item# ' + $routeParams.feedbackCode;
     self.feedback = {};
 
     self.refresh = function () {
         MemberFeedbackService.searchFeedbacks($routeParams.feedbackCode).then(_onGetFeedbackItem, _onGetFeedbackItemFailed);
     };
 
-    var _cacheRefreshTimeout = $interval(self.refresh, ConfigurationService.apiRefreshIntervalInSeconds * 1000);
+    //var _cacheRefreshTimeout = $interval(self.refresh, ConfigurationService.apiRefreshIntervalInSeconds * 1000);
 
     var _onGetFeedbackItem = function (response) {
         if (self.feedback && self.feedback.modified_dt == response.data.modified_dt)
@@ -23,7 +24,7 @@ var MemberFeedbackItemViewModel = function ($scope, $interval, $routeParams, Con
 
     var _onGetFeedbackItemFailed = function () {
 
-    }
+    };
 
     self.onViewShown = function () {
         self.feedback = {};

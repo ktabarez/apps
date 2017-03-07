@@ -10,8 +10,6 @@ var MemberFeedbackHomeViewModel = function ($scope, $interval, jQuery, DTOptions
         MemberFeedbackService.getFeedbacks().then(_onGetFeedbacks, _onGetFeedbacksFailed);
     };
 
-    var _cacheRefreshTimeout = $interval(self.refresh, ConfigurationService.apiRefreshIntervalInSeconds * 1000);
-
     var _onGetFeedbacks = function (response) {
         jQuery.each(response.data, function (idx, feedback) {
             if (!self.feedbacks[feedback.memberFeedbackCode]) {
@@ -36,9 +34,13 @@ var MemberFeedbackHomeViewModel = function ($scope, $interval, jQuery, DTOptions
             msg: 'controller.' + self.name + '.onviewshown',
             scope: $scope
         });
-
-        MemberFeedbackService.getFeedbacks().then(_onGetFeedbacks, _onGetFeedbacksFailed);
     };
+
+    var _init = function () {
+        self.refresh();
+    }
+
+    _init();
 }
 
 app.controller('MemberFeedbackHomeViewModel', ['$scope',

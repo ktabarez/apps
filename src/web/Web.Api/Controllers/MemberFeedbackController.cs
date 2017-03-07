@@ -137,6 +137,11 @@ namespace Web.Api.Controllers
                 },
                 item.AssignedToCopy,
                 item.AssignedDate,
+                resolvedBy = item.CNFG_SystemUser1 == null ? null : new
+                {
+                    item.CNFG_SystemUser1.SystemUserId,
+                    item.CNFG_SystemUser1.UserName,
+                }
             };
             return await Task.FromResult<HttpResponseMessage>(Request.CreateResponse(HttpStatusCode.OK, feedbackItem));
         }

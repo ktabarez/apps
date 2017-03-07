@@ -9,11 +9,31 @@
                     </a>
                 </div><!--Widget Buttons-->
             </div><!--Widget Header-->
-            <div class="widget-body">
+            <div class="widget-body">                
                 <div class="row">
-                    {{mfivm.feedback | json}}
+                    <div class="col-lg-12">
+                        <div class="form-title">Account #:</div>
+                        <p>{{mfivm.feedback.accountNumber}}</p>
+                        <div class="form-title">Member Name:</div>
+                        <p>{{mfivm.feedback.memberName}}</p>
+                        <div class="form-title">Comment:</div>
+                        <p>{{mfivm.feedback.comment}}</p>
+                    </div>
                 </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div role="form">
+                            <div class="form-group">
+                                <div class="form-title">Resolution:</div>
+                                <textarea ng-model="mfivm.feedback.resolution"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success">Save</button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
+    {{mfivm.feedback | json}}
 </div>

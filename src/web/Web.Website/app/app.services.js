@@ -80,99 +80,47 @@ var MemberFeedbackService = function ($http, $q, $rootScope, $interval, jQuery, 
         'users': ConfigurationService.urls.api.baseUrl + '/api/mfcu/apps/memberfeedback/users'
     };
 
-    var _cacheRefreshTimeout = null;
-
-    self.cache = {
-        isBeingRefreshed: false,
-        feedbackDfds: {},
-        users: {},
-        feedbackStatus : {
-            actionRequired: 1,
-            informationOnly: 2,
-            noActionRequired: 3,
-            notReviewed: 4,
-            resolved: 5
-        }
-    };
-
     self.refreshCache = function () {
-        self.isCacheBeingRefreshed = true;
-
-        $q.all(self.getUsers(), self.getFeedbacks()).then(function(){
-            self.isCacheBeingRefreshed = false;
-        });
+       return $q.all(self.getUsers(), self.getFeedbacks());
     };
 
     self.searchUsers = function (username) {
-        if (self.cache.users[username])
-            return self.cache.users[username];
-
-        self.cache.users[username] = $http({
+        return $http({
             type: 'GET',
             url: _endpoints.users + '/' + username
         });
     }
 
     self.searchFeedbacks = function (feedbackCode) {
-        //if (self.cache.feedbackDfds[feedbackCode])
-        //    return self.cache.feedbackDfds[feedbackCode];
-
-        //self.cache.feedbackDfds[feedbackCode] = $http({
-        //    url: _endpoints + '/' + feedbackCode,
-        //    method: 'GET'
-        //});
-
-        //return self.cache.feedbackDfds[feedbackCode];
-
-        self.cache.feedbackDfds[feedbackCode] = $http({
+        return $http({
             method: 'GET',
             url: _endpoints.feedbacks + '/' + feedbackCode,
             source: 'services.' + _type
         });
-
-        return self.cache.feedbackDfds[feedbackCode];
     }
 
     self.getFeedbacks = function (options) {
-        if (self.cache.feedbackDfds.all && !self.isCacheBeingRefreshed)
-            return self.cache.feedbackDfds.all;
-
         options = options || {};
         options.notInStatus = options.notInStatus || {};
 
-        self.cache.feedbackDfds.all = $http({
+        return $http({
             method: 'GET',
             url: _endpoints.feedbacks,
             source: 'services.' + _type,
             params: options.notInStatus
         });
-
-        return self.cache.feedbackDfds.all;
     };
 
     self.getUsers = function () {
-        if (self.cache.users.all && !self.isCacheBeingRefreshed)
-            return self.cache.feedbackDfds.all;
-
-        self.cache.users.all = $http({
+        return $http({
             method: 'GET',
             url: _endpoints.users,
             source: 'services.' + _type
-        }).then(function (response) {
-            self.cache.users = jQuery.map(response.data, function (item, idx) {
-                var newItem = {};
-
-                return newItem[item.username] = item;
-            });
         });
-
-        return self.cache.users.all;
     }
 
     self.init = function () {
-        self.refreshCache();
-
-        _cacheRefreshTimeout = $interval(self.refreshCache, ConfigurationService.apiRefreshIntervalInSeconds  * 1000);
+        //self.refreshCache();
     };
 };
 

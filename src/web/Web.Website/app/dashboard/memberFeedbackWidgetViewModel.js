@@ -5,6 +5,7 @@ var MemberFeedbackWidgetViewModel = function ($scope, $interval, jQuery, DTOptio
     self.widgetName = 'Member Feedback';
     self.name = arguments.callee.name;
     self.feedbacks = {};
+    self.users = {};
     self.dtOptions = DTOptionsBuilder.newOptions().withPaginationType('full_numbers');
     self.dtColumnDefs = [
         //DTColumnDefBuilder.newColumnDef(0),
@@ -25,10 +26,21 @@ var MemberFeedbackWidgetViewModel = function ($scope, $interval, jQuery, DTOptio
     ];
 
     self.refresh = function () {
-        MemberFeedbackService.getFeedbacks().then(_onGetFeedbacks, _onGetFeedbacksFailed);
+        MemberFeedbackService.getUsers().then(function (response) {
+            users = response.data;
+        });
+
+        MemberFeedbackService.getFeedbacks().then(function (response) {
+            _onGetFeedbacks(response);
+
+            console.log({
+                msg: 'controller.' + self.name + '.refreshed',
+                scope: $scope
+            });
+        }, _onGetFeedbacksFailed);
     };
 
-    var _cacheRefreshTimeout = $interval(self.refresh, ConfigurationService.apiRefreshIntervalInSeconds * 1000);
+    //var _cacheRefreshTimeout = $interval(self.refresh, ConfigurationService.apiRefreshIntervalInSeconds * 5);
 
     var _onGetFeedbacks = function (response) {
         jQuery.each(response.data, function (idx, feedback) {
@@ -50,13 +62,15 @@ var MemberFeedbackWidgetViewModel = function ($scope, $interval, jQuery, DTOptio
 
     }
 
+    var _init = function () {
+        self.refresh();
+    }
+
     self.onViewShown = function () {
         console.log({
             msg: 'controller.' + self.name + '.onviewshown',
             scope: $scope
         });
-
-        MemberFeedbackService.getFeedbacks().then(_onGetFeedbacks, _onGetFeedbacksFailed);
     };
 
     self.buildPerson2Add = function (id) {
@@ -80,6 +94,13 @@ var MemberFeedbackWidgetViewModel = function ($scope, $interval, jQuery, DTOptio
     self.removePerson = function (index) {
         self.persons.splice(index, 1);
     }
+
+    self.userSelected = function (feedback, user) {
+        console.log(feedback);
+        console.log(user);
+    }
+
+    _init();
 }
 
 app.controller('MemberFeedbackWidgetViewModel', ['$scope',
