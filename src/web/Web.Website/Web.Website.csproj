@@ -180,16 +180,9 @@
     <Content Include="app\dashboard\memberFeedback\itemViewModel.js">
       <DependentUpon>item.html</DependentUpon>
     </Content>
+    <Content Include="Content\ui-select.css" />
     <Content Include="libs\moment.js" />
     <Content Include="app\mainViewModel.js" />
-    <Content Include="app\memberFeedback\edit.html" />
-    <Content Include="app\memberFeedback\edit.js">
-      <DependentUpon>edit.html</DependentUpon>
-    </Content>
-    <Content Include="app\memberFeedback\new.html" />
-    <Content Include="app\memberFeedback\new.js">
-      <DependentUpon>new.html</DependentUpon>
-    </Content>
     <Content Include="assets\css\4095-rtl.min.css" />
     <Content Include="assets\css\4095.min.css" />
     <Content Include="assets\css\admindashboard-rtl.min.css" />
@@ -306,6 +299,7 @@
     <Content Include="assets\js\site.min.js.map" />
     <Content Include="app\app.directives.js" />
     <Content Include="app\app.constants" />
+    <Content Include="app\app.module.uiselect.js" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.1.1.js" />
     <Content Include="Scripts\jquery-3.1.1.min.js" />

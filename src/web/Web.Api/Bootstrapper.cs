@@ -146,7 +146,18 @@ namespace Web.Api
 
             /*memberfeedback*/
             builder.Register(c => new MemberFeedbackEntities()).As<MemberFeedbackEntities>();
-            builder.Register(c => new MemberFeedbackRepo(c.Resolve<MemberFeedbackEntities>())).As<IRepository<MemberFeedback>>().OnActivated(i => i.Instance.OnDbError += HandleOnDbError).InstancePerRequest();
+            builder.Register(c => new MemberFeedbackRepo(c.Resolve<MemberFeedbackEntities>())).As<IRepository<MemberFeedback>>().OnActivated(i =>
+            {
+                i.Instance.OnDbError += HandleOnDbError;
+                i.Instance.OnDbActivity += (k, d) =>
+                {
+                    LogServiceAsync<WebLogServiceOptions>.Instance.LogMessage(new
+                    {
+                        type = "dbActivity",
+                        data = d
+                    });
+                };
+            }).InstancePerRequest();
             builder.Register(c => new MemberFeedbackUserRepo(c.Resolve<MemberFeedbackEntities>())).As<IRepository<CNFG_SystemUser>>().OnActivated(i => i.Instance.OnDbError += HandleOnDbError).InstancePerRequest();
 
         }

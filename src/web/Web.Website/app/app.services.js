@@ -75,9 +75,9 @@ var MemberFeedbackService = function ($http, $q, $rootScope, $interval, jQuery, 
 
     var _type = arguments.callee.name;
 
-    var _endpoints = {
-        'feedbacks': ConfigurationService.urls.api.baseUrl + '/api/mfcu/apps/memberfeedback/feedbacks',
-        'users': ConfigurationService.urls.api.baseUrl + '/api/mfcu/apps/memberfeedback/users'
+    self.endpoints = {
+        feedbacks: ConfigurationService.urls.api.baseUrl + '/api/mfcu/apps/memberfeedback/feedbacks',
+        users: ConfigurationService.urls.api.baseUrl + '/api/mfcu/apps/memberfeedback/users'
     };
 
     self.refreshCache = function () {
@@ -87,14 +87,23 @@ var MemberFeedbackService = function ($http, $q, $rootScope, $interval, jQuery, 
     self.searchUsers = function (username) {
         return $http({
             type: 'GET',
-            url: _endpoints.users + '/' + username
+            url: self.endpoints.users + '/' + username
         });
     }
 
     self.searchFeedbacks = function (feedbackCode) {
         return $http({
             method: 'GET',
-            url: _endpoints.feedbacks + '/' + feedbackCode,
+            url: self.endpoints.feedbacks + '/' + feedbackCode,
+            source: 'services.' + _type
+        });
+    }
+
+    self.saveFeedbacks = function (feedbacks) {
+        return $http({
+            method: 'PUT',
+            data: feedbacks,
+            url: self.endpoints.feedbacks,
             source: 'services.' + _type
         });
     }
@@ -105,7 +114,7 @@ var MemberFeedbackService = function ($http, $q, $rootScope, $interval, jQuery, 
 
         return $http({
             method: 'GET',
-            url: _endpoints.feedbacks,
+            url: self.endpoints.feedbacks,
             source: 'services.' + _type,
             params: options.notInStatus
         });
@@ -114,7 +123,7 @@ var MemberFeedbackService = function ($http, $q, $rootScope, $interval, jQuery, 
     self.getUsers = function () {
         return $http({
             method: 'GET',
-            url: _endpoints.users,
+            url: self.endpoints.users,
             source: 'services.' + _type
         });
     }

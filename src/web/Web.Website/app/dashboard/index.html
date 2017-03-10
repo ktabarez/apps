@@ -9,81 +9,10 @@
                     </a>
                 </div><!--Widget Buttons-->
             </div><!--Widget Header-->
-            <div class="widget-body">
+            <div class="widget-body" style="overflow-y: hidden;overflow-x: auto;">
                 <div class="row">
                     <div class="col-lg-12">
-                        <table datatable="ng" dt-options="mfvm.dtOptions" dt-columns-defs="mfvm.dtColumnDefs" dt-disable-deep-watchers="true" class="table table-bordered table-hover table-striped">
-                            <thead>
-                                <tr role="row">
-                                    <th class="ui-state-default">Feedback Code</th>
-                                    <th class="ui-state-default">Type</th>
-                                    <th class="ui-state-default">Acc #</th>
-                                    <th class="ui-state-default">Status</th>
-                                    <th class="ui-state-default">Assigned To:</th>
-
-                                    <!--
-                                    <th class="ui-state-default">Category</th>
-                                    <th class="ui-state-default">Area</th>
-                                    <th class="ui-state-default">Source</th>
-                                    <th class="ui-state-default">MemberName</th>
-                                    <th class="ui-state-default">Comment</th>
-                                    <th class="ui-state-default">Resolution</th>
-                                    <th class="ui-state-default">Created By</th>
-                                    <th class="ui-state-default">Date Created</th>
-                                    <th class="ui-state-default">Branch</th>
-                                    <th class="ui-state-default">AssignedTo</th>
-                                    <th class="ui-state-default">AssignedToCopy</th>
-                                    <th class="ui-state-default">AssignedDate</th>-->
-                                </tr>
-                            </thead>
-                            <tr ng-repeat="feedback in mfvm.feedbacks">
-                                <td><a ng-href="{{feedback.htmlUrl}}">{{feedback.memberFeedbackCode}}</a></td>
-                                <td>
-                                    <i ng-show="feedback.type.feedbackTypeDescr=='Compliment'" class="fa fa-thumbs-o-up success"></i>
-                                    <i ng-show="feedback.type.feedbackTypeDescr=='Complaint'" class="fa fa-thumbs-o-down danger"></i>
-                                    <i ng-show="feedback.type.feedbackTypeDescr=='Suggestion'" class="fa fa-bullhorn info"></i>
-                                    <i ng-show="feedback.type.feedbackTypeDescr=='Resolution'" class="fa fa-thumbs-o-up green"></i>
-                                    <i ng-show="feedback.type.feedbackTypeDescr=='NCUA'" class="fa fa-building-o blueberry"></i>
-                                    <i ng-show="feedback.type.feedbackTypeDescr=='BBB'" class="fa fa-star-half-full gold"></i>
-                                    <i ng-show="feedback.type.feedbackTypeDescr=='Regulatory - Other'" class="fa fa-certificate sky"></i>
-                                    <i ng-show="feedback.type.feedbackTypeDescr=='Legal'" class="fa fa-gavel orange"></i>
-                                    <i ng-show="feedback.type.feedbackTypeDescr=='Compliance Issue'" class="fa fa-file-text-o danger"></i>
-                                    <i ng-show="feedback.type.feedbackTypeDescr=='Undefined'" class="fa fa-question darkcarbon"></i>
-                                    {{feedback.type.feedbackTypeDescr}}
-                                    
-                                </td>
-                                <td>{{feedback.accountNumber}}</td>
-                                <td>
-                                    <span ng-show="feedback.status.statusDescr=='Resolved'" class="label label-success">{{feedback.status.statusDescr}}</span>
-                                    <span ng-show="feedback.status.statusDescr=='No Action Required'" class="label label-default">{{feedback.status.statusDescr}}</span>
-                                    <span ng-show="feedback.status.statusDescr=='Not Reviewed'" class="label label-warning">{{feedback.status.statusDescr}}</span>
-                                    <span ng-show="feedback.status.statusDescr=='Action Required'" class="label label-danger">{{feedback.status.statusDescr}}</span>
-                                    <span ng-show="feedback.status.statusDescr=='Information Only'" class="label label-primary">{{feedback.status.statusDescr}}</span>
-                                </td>
-                                <td>
-                                    <select ng-repeat="user in mfvm.users">
-                                        <option>{{user.userName}}</option>
-                                    </select>
-                                    <!--<select ng-options="user.systemUserId as user.userName for user in mfvm.users"
-                                            ng-model="feedback.selectedUser" ng-change="mfvm.userSelected(feedback)"></select>-->
-                                </td>
-                                <!--
-                                <td>{{feedback.category.categoryDescr}}</td>
-                                <td>{{feedback.source.sourceDescr}}</td>
-                                <td>{{feedback.memberName}}</td>
-                                <td>{{feedback.comment}}</td>
-                                <td>{{feedback.resolution}}</td>
-                                <td>{{feedback.created_by}}</td>
-                                <td>{{feedback.created_dt}}</td>
-                                <td>{{feedback.modified_by}}</td>
-                                <td>{{feedback.modified_dt}}</td>
-                                <td>{{feedback.branch}}</td>
-                                <td>{{feedback.assignedTo.userName}}</td>
-                                <td>{{feedback.assignedToCopy}}</td>
-                                <td>{{feedback.AssignedDate}}</td>-->
-                            </tr>
-                            <tbody></tbody>
-                        </table>
+                        <table datatable="" dt-options="mfvm.dtOptions"  dt-columns="mfvm.dtColumns" dt class="table table-bordered table-hover table-striped"></table>
                     </div>
                 </div>
             </div>
