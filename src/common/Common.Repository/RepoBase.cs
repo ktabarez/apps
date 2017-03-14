@@ -120,20 +120,29 @@ namespace Common.Repository
             return results;
         }
 
-        public virtual async Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> filter = null,
+        public virtual async Task<Tuple<IEnumerable<TEntity>, int>> GetAsync(Expression<Func<TEntity, bool>> filter = null,
                Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
                int page = 0,
                int limit = 0,
                params string[] includeProperties)
         {
             IEnumerable<TEntity> results = null;
+            int totalItems = 0;
 
             try
             {
-                IQueryable<TEntity> query = GetQuery(filter, page, limit, includeProperties);
+                IQueryable<TEntity> query = _entities;
+
+                if (filter != null)
+                    query = query.Where(filter);
 
                 if (orderBy != null)
-                    results = await orderBy(query).ToListAsync();
+                    query = orderBy(query);
+
+                totalItems = query.Count();
+
+                if(limit > 0)
+                    query = query.Skip((page - 1) * limit).Take(limit);
 
                 results = await query.ToListAsync();
             }
@@ -146,7 +155,7 @@ namespace Common.Repository
                 RaiseDbException(ex);
             }
 
-            return results;
+            return Tuple.Create<IEnumerable<TEntity>, int>(results, totalItems);
         }
 
         public virtual void Create(TEntity entity)
@@ -278,8 +287,7 @@ namespace Common.Repository
         {
             try
             {
-                _entities.Attach(entity);
-                _context.Entry(_entities).State = EntityState.Modified;
+                _context.Entry(entity).State = EntityState.Modified;
                 _context.SaveChanges();
 
                 await _context.SaveChangesAsync();

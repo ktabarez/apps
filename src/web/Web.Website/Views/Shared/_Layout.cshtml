@@ -30,6 +30,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.css">    
     <link href="~/Content/ui-select.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.8.5/css/selectize.default.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/2.1.0/toaster.css" rel="stylesheet" />
+
 
     <!--Fonts-->
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300" rel="stylesheet" type="text/css" />
@@ -412,23 +414,7 @@
                         <li class="active">
                             <a href="#">
                                 <i class="menu-icon glyphicon glyphicon-home"></i>
-                                <span class="menu-text"> Dashboard </span>
-                            </a>
-                        </li>
-
-                        <!--Stats-->
-                        <li>
-                            <a href="stats.html">
-                                <i class="menu-icon fa fa-bar-chart-o"></i>
-                                <span class="menu-text"> Stats </span>
-                            </a>
-                        </li>
-
-                        <!--Settings-->
-                        <li>
-                            <a href="settings.html">
-                                <i class="menu-icon fa fa-gear"></i>
-                                <span class="menu-text"> Settings </span>
+                                <span class="menu-text"> Home </span>
                             </a>
                         </li>
                     </ul>
@@ -462,7 +448,8 @@
         </div>
         <!-- /Main Container -->
     </div>
-
+    <toaster-container toaster-options="{'time-out': 0, 'position-class': 'toast-bottom-right', 'toaster-id': 2}"></toaster-container>
+    <toaster-container toaster-options="{'time-out': 0, 'position-class': 'toast-top-full-width', 'toaster-id': 1}"></toaster-container>
     <!-- basic scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
@@ -482,12 +469,13 @@
     <script src="~/scripts/angular-route.js"></script>
     <script src="~/scripts/angular-ui/ui-bootstrap-tpls.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/2.1.0/toaster.js"></script>
+
     @*<script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-1.3.3.js"></script>*@
 
     <!-- view model scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-datatables/0.5.7/angular-datatables.js"></script>
     <script src="~/app/app.base.js"></script>
-    <script src="~/app/app.module.auth.js"></script>
     <script src="~/app/app.module.uiselect.js"></script>
     <script src="~/app/app.module.cookies.js"></script>
     <script src="~/libs/moment.js"></script>
@@ -501,9 +489,6 @@
 
             self.isInDebugMode = '@ViewBag.IsInDebugMode';
             self.username = '@ViewBag.UserName';
-            self.clientId = 'ngDashboardApp';
-            self.orgId = '1';
-            self.apiRefreshIntervalInSeconds = 5;
             self.urls = {
                 website: {
                     baseUrl: '@ViewBag.BaseUrl',

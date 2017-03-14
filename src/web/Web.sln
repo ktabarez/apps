@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Api", "Web.Api\Web.Api.csproj", "{5ED58C23-AA3A-4F76-AF7D-03FF42117425}"
 EndProject
@@ -41,8 +41,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{5BD757
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityProviders.SqlServerProvider", "..\common\IdentityProviders.SqlServerProvider\IdentityProviders.SqlServerProvider.csproj", "{B75A70E7-BD90-4D8C-8B86-FD152D885E31}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1BBDCFA1-98EB-440A-94CA-93A9D9B2056C}"
 	ProjectSection(SolutionItems) = preProject
@@ -122,10 +120,6 @@ Global
 		{5C7418E3-6C34-4D20-AC46-769EC7DDEFEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C7418E3-6C34-4D20-AC46-769EC7DDEFEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C7418E3-6C34-4D20-AC46-769EC7DDEFEA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B75A70E7-BD90-4D8C-8B86-FD152D885E31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B75A70E7-BD90-4D8C-8B86-FD152D885E31}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B75A70E7-BD90-4D8C-8B86-FD152D885E31}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B75A70E7-BD90-4D8C-8B86-FD152D885E31}.Release|Any CPU.Build.0 = Release|Any CPU
 		{23EDFA87-4A51-4C83-8A1E-C9EE7AD1F180}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{23EDFA87-4A51-4C83-8A1E-C9EE7AD1F180}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23EDFA87-4A51-4C83-8A1E-C9EE7AD1F180}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -155,6 +149,5 @@ Global
 		{72D294FB-299A-4435-9A15-E6BFC00FEDB6} = {F8F1AC9D-4C92-4EA3-B3F2-2458AE3B9961}
 		{EB0700AD-E986-40FC-B57C-E488038CB71C} = {F8F1AC9D-4C92-4EA3-B3F2-2458AE3B9961}
 		{5C7418E3-6C34-4D20-AC46-769EC7DDEFEA} = {F8F1AC9D-4C92-4EA3-B3F2-2458AE3B9961}
-		{B75A70E7-BD90-4D8C-8B86-FD152D885E31} = {F8F1AC9D-4C92-4EA3-B3F2-2458AE3B9961}
 	EndGlobalSection
 EndGlobal

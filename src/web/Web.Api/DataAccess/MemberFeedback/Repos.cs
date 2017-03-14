@@ -29,84 +29,165 @@ namespace Web.Api.DataAccess.MemberFeedback
             return await query.ToListAsync();
         }
 
-        public async Task<Tuple<IEnumerable<MemberFeedback>, int>> GetPaginatedTableAsync(string searchValue = null, string sortColumn = "0", string orderByDir = "asc", int page = 0, int limit = 0)
+        public async Task<Tuple<IEnumerable<MemberFeedback>, int>> GetPaginatedTableAsync(bool isAdmin = false, int userId = 0, string searchValue = null, string sortColumn = "0", string orderByDir = "asc", int page = 0, int limit = 0)
         {
             Tuple<IEnumerable<MemberFeedback>, int> items = null;
 
             if(!String.IsNullOrEmpty(searchValue))
-                items = await base.GetAsync(filter: (i) => i.MemberFeedbackCode.Contains(searchValue) ||
-                                                            i.AccountNumber.Contains(searchValue) ||
-                                                            i.CNFG_FeedbackType.FeedbackTypeDescr.Contains(searchValue) ||
-                                                            i.CNFG_Status.StatusDescr.Contains(searchValue) ||
-                                                            i.Comment.Contains(searchValue) ||
-                                                            (i.AssignedToSystemUserID != null && i.CNFG_SystemUser.UserName.Contains(searchValue)),
-                                            orderBy: i =>
-                                            {
-                                                if (orderByDir.Equals("asc"))
+            {
+                if(isAdmin)
+                    items = await base.GetAsync(filter: (i) => i.MemberFeedbackCode.Contains(searchValue) ||
+                                                                i.AccountNumber.Contains(searchValue) ||
+                                                                i.CNFG_FeedbackType.FeedbackTypeDescr.Contains(searchValue) ||
+                                                                i.CNFG_Status.StatusDescr.Contains(searchValue) ||
+                                                                i.Comment.Contains(searchValue) ||
+                                                                (i.AssignedToSystemUserID != null && i.CNFG_SystemUser.UserName.Contains(searchValue)),
+                                                orderBy: i =>
+                                                {
+                                                    if (orderByDir.Equals("asc"))
+                                                        switch (sortColumn)
+                                                        {
+                                                            case "1":
+                                                                return i.OrderBy(k => k.AccountNumber);
+                                                            case "2":
+                                                                return i.OrderBy(k => k.CNFG_FeedbackType.FeedbackTypeDescr);
+                                                            case "3":
+                                                                return i.OrderBy(k => k.CNFG_Status.StatusDescr);
+                                                            case "4":
+                                                                return i.OrderBy(k => k.Comment);
+                                                            default:
+                                                                return i.OrderBy(k => k.MemberFeedbackCode);
+                                                        }
+
                                                     switch (sortColumn)
                                                     {
                                                         case "1":
-                                                            return i.OrderBy(k => k.AccountNumber);
+                                                            return i.OrderByDescending(k => k.AccountNumber);
                                                         case "2":
-                                                            return i.OrderBy(k => k.CNFG_FeedbackType.FeedbackTypeDescr);
+                                                            return i.OrderByDescending(k => k.CNFG_FeedbackType.FeedbackTypeDescr);
                                                         case "3":
-                                                            return i.OrderBy(k => k.CNFG_Status.StatusDescr);
+                                                            return i.OrderByDescending(k => k.CNFG_Status.StatusDescr);
                                                         case "4":
-                                                            return i.OrderBy(k => k.Comment);
+                                                            return i.OrderByDescending(k => k.Comment);
                                                         default:
-                                                            return i.OrderBy(k => k.MemberFeedbackCode);
+                                                            return i.OrderByDescending(k => k.MemberFeedbackCode);
                                                     }
+                                                },
+                                                page: page,
+                                                limit: limit);
+                else
+                    items = await base.GetAsync(filter: (i) => i.AssignedToSystemUserID == userId && (i.MemberFeedbackCode.Contains(searchValue) ||
+                                                               i.AccountNumber.Contains(searchValue) ||
+                                                               i.CNFG_FeedbackType.FeedbackTypeDescr.Contains(searchValue) ||
+                                                               i.CNFG_Status.StatusDescr.Contains(searchValue) ||
+                                                               i.Comment.Contains(searchValue) ||
+                                                               (i.AssignedToSystemUserID != null && i.CNFG_SystemUser.UserName.Contains(searchValue))),
+                                               orderBy: i =>
+                                               {
+                                                   if (orderByDir.Equals("asc"))
+                                                       switch (sortColumn)
+                                                       {
+                                                           case "1":
+                                                               return i.OrderBy(k => k.AccountNumber);
+                                                           case "2":
+                                                               return i.OrderBy(k => k.CNFG_FeedbackType.FeedbackTypeDescr);
+                                                           case "3":
+                                                               return i.OrderBy(k => k.CNFG_Status.StatusDescr);
+                                                           case "4":
+                                                               return i.OrderBy(k => k.Comment);
+                                                           default:
+                                                               return i.OrderBy(k => k.MemberFeedbackCode);
+                                                       }
 
-                                                switch (sortColumn)
-                                                {
-                                                    case "1":
-                                                        return i.OrderByDescending(k => k.AccountNumber);
-                                                    case "2":
-                                                        return i.OrderByDescending(k => k.CNFG_FeedbackType.FeedbackTypeDescr);
-                                                    case "3":
-                                                        return i.OrderByDescending(k => k.CNFG_Status.StatusDescr);
-                                                    case "4":
-                                                        return i.OrderByDescending(k => k.Comment);
-                                                    default:
-                                                        return i.OrderByDescending(k => k.MemberFeedbackCode);
-                                                }
-                                            },
-                                            page: page,
-                                            limit: limit);
+                                                   switch (sortColumn)
+                                                   {
+                                                       case "1":
+                                                           return i.OrderByDescending(k => k.AccountNumber);
+                                                       case "2":
+                                                           return i.OrderByDescending(k => k.CNFG_FeedbackType.FeedbackTypeDescr);
+                                                       case "3":
+                                                           return i.OrderByDescending(k => k.CNFG_Status.StatusDescr);
+                                                       case "4":
+                                                           return i.OrderByDescending(k => k.Comment);
+                                                       default:
+                                                           return i.OrderByDescending(k => k.MemberFeedbackCode);
+                                                   }
+                                               },
+                                               page: page,
+                                               limit: limit);
+            }
+
             else
-                items = await base.GetAsync(orderBy: i =>
-                            {
-                                if (orderByDir.Equals("asc"))
+                if(isAdmin)
+                    items = await base.GetAsync(
+                        orderBy: i =>
+                                {
+                                    if (orderByDir.Equals("asc"))
+                                        switch (sortColumn)
+                                        {
+                                            case "1":
+                                                return i.OrderBy(k => k.AccountNumber);
+                                            case "2":
+                                                return i.OrderBy(k => k.CNFG_FeedbackType.FeedbackTypeDescr);
+                                            case "3":
+                                                return i.OrderBy(k => k.CNFG_Status.StatusDescr);
+                                            case "4":
+                                                return i.OrderBy(k => k.Comment);
+                                            default:
+                                                return i.OrderBy(k => k.MemberFeedbackCode);
+                                        }
+
                                     switch (sortColumn)
                                     {
                                         case "1":
-                                            return i.OrderBy(k => k.AccountNumber);
+                                            return i.OrderByDescending(k => k.AccountNumber);
                                         case "2":
-                                            return i.OrderBy(k => k.CNFG_FeedbackType.FeedbackTypeDescr);
+                                            return i.OrderByDescending(k => k.CNFG_FeedbackType.FeedbackTypeDescr);
                                         case "3":
-                                            return i.OrderBy(k => k.CNFG_Status.StatusDescr);
+                                            return i.OrderByDescending(k => k.CNFG_Status.StatusDescr);
                                         case "4":
-                                            return i.OrderBy(k => k.Comment);
+                                            return i.OrderByDescending(k => k.Comment);
                                         default:
-                                            return i.OrderBy(k => k.MemberFeedbackCode);
+                                            return i.OrderByDescending(k => k.MemberFeedbackCode);
                                     }
-
+                                },
+                                page: page,
+                                limit: limit);
+            else
+                items = await base.GetAsync(filter: i => i.AssignedToSystemUserID == userId,
+                        orderBy: i =>
+                        {
+                            if (orderByDir.Equals("asc"))
                                 switch (sortColumn)
                                 {
                                     case "1":
-                                        return i.OrderByDescending(k => k.AccountNumber);
+                                        return i.OrderBy(k => k.AccountNumber);
                                     case "2":
-                                        return i.OrderByDescending(k => k.CNFG_FeedbackType.FeedbackTypeDescr);
+                                        return i.OrderBy(k => k.CNFG_FeedbackType.FeedbackTypeDescr);
                                     case "3":
-                                        return i.OrderByDescending(k => k.CNFG_Status.StatusDescr);
+                                        return i.OrderBy(k => k.CNFG_Status.StatusDescr);
                                     case "4":
-                                        return i.OrderByDescending(k => k.Comment);
+                                        return i.OrderBy(k => k.Comment);
                                     default:
-                                        return i.OrderByDescending(k => k.MemberFeedbackCode);
+                                        return i.OrderBy(k => k.MemberFeedbackCode);
                                 }
-                            },
-                            page: page,
-                            limit: limit);
+
+                            switch (sortColumn)
+                            {
+                                case "1":
+                                    return i.OrderByDescending(k => k.AccountNumber);
+                                case "2":
+                                    return i.OrderByDescending(k => k.CNFG_FeedbackType.FeedbackTypeDescr);
+                                case "3":
+                                    return i.OrderByDescending(k => k.CNFG_Status.StatusDescr);
+                                case "4":
+                                    return i.OrderByDescending(k => k.Comment);
+                                default:
+                                    return i.OrderByDescending(k => k.MemberFeedbackCode);
+                            }
+                        },
+                                page: page,
+                                limit: limit);
 
             return items;
         }
@@ -135,4 +216,32 @@ namespace Web.Api.DataAccess.MemberFeedback
             return await query.ToListAsync();
         }
     }
+
+    public class MemberFeedbackTypeRepo : RepoBase<CNFG_FeedbackType>
+    {
+        public MemberFeedbackTypeRepo(DbContext context)
+            : base(context)
+        {
+
+        }
+    }
+
+    public class MemberFeedbackSourceRepo : RepoBase<CNFG_Source>
+    {
+        public MemberFeedbackSourceRepo(DbContext context)
+            : base(context)
+        {
+
+        }
+    }
+
+    public class MemberFeedbackCategoryRepo : RepoBase<CNFG_Category>
+    {
+        public MemberFeedbackCategoryRepo(DbContext context)
+            : base(context)
+        {
+
+        }
+    }
+
 }

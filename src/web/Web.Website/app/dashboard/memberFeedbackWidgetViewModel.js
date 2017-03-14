@@ -85,6 +85,12 @@ var MemberFeedbackWidgetViewModel = function ($scope, $interval, $timeout, $comp
     self.dtOptions = DTOptionsBuilder.newOptions().withOption('ajax', {
         dataSrc: 'data',
         url: ConfigurationService.urls.api.baseUrl + '/api/someorgname/apps/memberfeedback/search/feedbacks',
+        data: {
+            username: ConfigurationService.username
+        },
+        xhrFields: {
+            withCredentials: true
+        },
         dataType: 'json',
         //contentType: 'application/json',
         type: 'POST'

@@ -1,5 +1,5 @@
 ﻿
-var MemberFeedbackItemViewModel = function ($scope, $interval, $routeParams, $q, ConfigurationService, MemberFeedbackService) {
+var MemberFeedbackItemViewModel = function ($scope, $interval, $routeParams, $q, $location, toaster, ConfigurationService, MemberFeedbackService) {
     var self = this;
     var _userDic = {};
 
@@ -11,8 +11,6 @@ var MemberFeedbackItemViewModel = function ($scope, $interval, $routeParams, $q,
     self.users = [];
     
     self.widgetBgColor = 'bg-default';
-
-    //var _cacheRefreshTimeout = $interval(self.refresh, ConfigurationService.apiRefreshIntervalInSeconds * 1000);
 
     var _onGetUsers = function (response) {
         self.users = response.data;
@@ -77,6 +75,26 @@ var MemberFeedbackItemViewModel = function ($scope, $interval, $routeParams, $q,
 
     };
 
+    var _onFeedbackSaved = function () {
+        toaster.pop({
+            type: 'success',//error, warning, note
+            title: 'Feedback Updated',
+            body: 'Member Feedback Item# ' + self.feedback.memberFeedbackCode,
+            toasterId: 2
+        });
+    }
+
+    var _onFeedbackSavedFailed = function (msg) {
+        toaster.pop({
+            type: 'error',//error, warning, note
+            title: 'Feedback Updated',
+            body: msg,
+            toasterId: 1
+        });
+
+        $location.navigate('/');
+    }
+
     self.refresh = function () {
         //do a q all here to get the selected user after the feedback item is returns
         $q.all([MemberFeedbackService.searchFeedbacks($routeParams.feedbackCode),
@@ -84,17 +102,6 @@ var MemberFeedbackItemViewModel = function ($scope, $interval, $routeParams, $q,
                    _onGetUsers(responses[1]);
                    _onGetFeedbackItem(responses[0]);
                });
-        //.then(_onGetFeedbackItem, _onGetFeedbackItemFailed);
-        //.then(function (response) {
-        //    for (var i = 0; i < response.data.length; i++) {
-        //        _userDic[response.data[i].systemUserId] = {
-        //            user: response.data[i],
-        //            idx: i
-        //        };
-        //    }
-
-        //    self.users = response.data;
-        //});
     };
 
     self.save = function () {
@@ -103,7 +110,7 @@ var MemberFeedbackItemViewModel = function ($scope, $interval, $routeParams, $q,
             memberFeedbackID: self.feedback.memberFeedbackID,
             assignedToId: self.selectedUser ? self.selectedUser.systemUserId : -1,
             resolution: self.feedback.resolution
-        }]);
+        }]).success(_onFeedbackSaved).error(_onFeedbackSavedFailed);
     }
 
     self.onViewShown = function () {
@@ -121,6 +128,8 @@ app.controller('MemberFeedbackItemViewModel', ['$scope',
     '$interval',
     '$routeParams',
     '$q',
+    '$location',
+    'toaster',
     'ConfigurationService',
     'MemberFeedbackService',
     MemberFeedbackItemViewModel]);

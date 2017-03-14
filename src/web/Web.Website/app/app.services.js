@@ -1,7 +1,7 @@
 ﻿/// <reference path="app.base.js" />
 /// <reference path="app.module.js" />
 
-var AuthenticationService = function ($http, $q, $rootScope, $cookies, authService, moment, ConfigurationService) {
+var AuthenticationService = function ($http, $q, $rootScope, $cookies, moment, ConfigurationService) {
     var self = this;
 
     var _type = arguments.callee.name;
@@ -10,63 +10,8 @@ var AuthenticationService = function ($http, $q, $rootScope, $cookies, authServi
         'token': ConfigurationService.urls.api.baseUrl + '/token',
     }
 
-    var _isAccessTokenCookieValid = function() {
-        if (self.userSecurityInfo && moment(self.userSecurityInfo['.expires'], 'ddd, D MMM YYYY HH:mm:ss GMT').isAfter(moment(new Date())))
-            return true;
-
-        return false;
-    }
-
-    self.userSecurityInfo = null;
-
-    var _login = function () {
-        var promise = $http({
-            method: 'POST',
-            url: _endpoints.token,
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-            },
-            data: $.param({
-                grant_type: 'password',
-                username: ConfigurationService.username,
-                client_id: ConfigurationService.clientId,
-                org_id: ConfigurationService.orgId
-            })
-        });
-
-        promise.then(function (response, status, config, headers) {
-            self.userSecurityInfo = response.data;
-            $cookies.putObject('userSecurityInfo', self.userSecurityInfo);
-
-            authService.loginConfirmed('success');
-        });
-    };
-
-    var _refreshAccessToken = function () {
-
-    };
-
-    self.authenticate = function (rejection) {
-        self.userSecurityInfo = $cookies.getObject('userSecurityInfo');
-
-        //no security cookie then get new access token
-        if (!self.userSecurityInfo)
-            _login();
-        //security cookie valid
-        else if (_isAccessTokenCookieValid()){
-            authService.loginConfirmed('success', function (config) {
-                config.headers["Authorization"] = 'Bearer ' + self.userSecurityInfo['access_token'];
-                return config;
-            });
-        }
-        //use refresh token
-        else {
-            //refresh token
-        }
-    };
-
     self.init = function () {
-        $rootScope.$on('event:auth-loginRequired', self.authenticate);
+
     }
 };
 
@@ -139,7 +84,6 @@ app.service('AuthenticationService', [
     '$q',
     '$rootScope',
     '$cookies',
-    'authService',
     'moment',
     'ConfigurationService',
     AuthenticationService]);

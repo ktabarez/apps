@@ -36,7 +36,7 @@ namespace Common.ApiControllers
 
                 string username = ControllerContext.RequestContext.Principal.Identity.Name;
 
-                if (username.Contains("//"))
+                if (username.Contains("\\"))
                     return username.Split('\\')[1];
 
                 return username;
